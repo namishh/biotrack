@@ -1,4 +1,4 @@
 bin
 .env
 node_modules
-tmp/*
+tmp
