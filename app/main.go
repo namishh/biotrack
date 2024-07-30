@@ -1,6 +1,7 @@
 package main
 
 import (
+	"html/template"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -16,13 +17,21 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
+	t := &Template{
+		templates: template.Must(template.ParseGlob("views/*/*.html")),
+	}
+
+	//Css styles
+	e.Static("/css", "public/assets")
+
+	e.Renderer = t
 	e.GET("/", hello)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":6969"))
 }
 
 // Handler
 func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World from Echo!")
+	return c.Render(http.StatusOK, "index", "World")
 }
