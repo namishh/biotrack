@@ -9,7 +9,7 @@ func main() {
 	// Echo instance
 	e := echo.New()
 
-	// Middleware
+	// Use Middleware Here
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Static("/static", "public/assets")
