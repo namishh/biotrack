@@ -12,7 +12,7 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Static("/css", "public/assets")
+	e.Static("/static", "public/assets")
 
 	// Start server
 	e.Logger.Fatal(e.Start(":6969"))
