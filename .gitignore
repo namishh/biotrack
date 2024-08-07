@@ -2,4 +2,4 @@ bin
 .env
 node_modules
 tmp
-assets/app.css
+public/assets/app.css
