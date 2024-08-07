@@ -13,7 +13,7 @@ $ make css
   - [x] Setup echo
   - [x] Tailwindcss
   - [ ] Get templ working
-  - [ ] Postgres
+  - [x] Sqlite 3
 - [ ] Authentication
   - [ ] Register
   - [ ] Login
