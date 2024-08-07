@@ -1,12 +1,21 @@
 package components
 
 templ Navbar(username string, fromProtected bool) {
-	<nav class="  fixed top-0 z-10">
-		<div class="navbar-start">
-			<a hx-swap="transition:true" class="btn btn-ghost text-xl" href="/">
-				BioTrack
+	<nav class="fixed top-8 w-screen flex justify-center items-center">
+		<div class="navbar w-5/6 lg:w-1/2 rounded-xl border-2 border-zinc-800 p-3 bg-zinc-800/50 backdrop-blur-3xl flex justify-between">
+			<a href="/" class="justify-center items-center flex gap-4">
+				<img src="/static/favicon.png" class="h-8"/>
+				<span class="text-purple-400 text-xl font-bold">BIO <span class="text-white font-normal">Track</span></span>
 			</a>
+			// LINKS
+			<div class="flex items-center gap-3">
+				if fromProtected {
+					<a href="/profile" class="text-white">Profile</a>
+					<a href="/stats" class="text-white">Stats</a>
+				} else {
+					<a href="/signin" class="text-white">Sign In</a>
+				}
+			</div>
 		</div>
-		<div class="navbar-end"></div>
 	</nav>
 }

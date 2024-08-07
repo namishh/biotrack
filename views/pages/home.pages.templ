@@ -3,7 +3,8 @@ package pages
 import "github.com/namishh/biotrack/views/layouts"
 
 templ Home(fromProtected bool) {
-	<section class="mx-auto w-fit flex flex-col gap-8 text-center">
+	<section class="mx-auto w-fit flex flex-col gap-8 text-center bg-zinc-900">
+		hello
 		if !fromProtected {
 		}
 	</section>
@@ -14,10 +15,9 @@ templ HomeIndex(
 	username string,
 	fromProtected bool,
 	isError bool,
-	errMsgs, sucMsgs []string,
 	cmp templ.Component,
 ) {
-	@layouts.Base(title, username, fromProtected, isError, errMsgs, sucMsgs) {
+	@layouts.Base(title, username, fromProtected, isError) {
 		@cmp
 	}
 }

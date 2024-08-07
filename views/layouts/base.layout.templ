@@ -2,7 +2,7 @@ package layouts
 
 import "github.com/namishh/biotrack/views/components"
 
-templ Base(title, username string, fromProtected, isError bool, errMsgs, sucMsgs []string) {
+templ Base(title, username string, fromProtected, isError bool) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -13,11 +13,16 @@ templ Base(title, username string, fromProtected, isError bool, errMsgs, sucMsgs
 				content="Bio Track"
 			/>
 			<meta name="google" content="notranslate"/>
-			<link rel="stylesheet" href="/static/main.css" type="text/css"/>
+			<link rel="stylesheet" href="/static/app.css" type="text/css"/>
+			<link rel="icon" type="image/png" href="/static/favicon.png"/>
 			<title>Bio Track | { title }</title>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
 			<script src="https://unpkg.com/htmx.org@2.0.1"></script>
 		</head>
-		<body class="sample-transition" hx-boost="true">
+		<body class="bg-zinc-950" hx-boost="true">
+			<div class="min-h-screen bg-gradient-to-b from-purple-500/10 via-[#00000000] via-30% to-purple-500/20">a</div>
 			<header>
 				if !isError {
 					@components.Navbar(username, fromProtected)

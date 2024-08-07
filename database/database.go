@@ -56,6 +56,7 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		birthday DATE,
 		streak INTEGER DEFAULT 0,
 		bio TEXT,
+		profile_of INT,
 		last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY(profile_of) REFERENCES users(id)
 	);`
@@ -70,6 +71,7 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		created_at DATETIME default CURRENT_TIMESTAMP,
 		type TEXT NOT NULL,
 		status TEXT NOT NULL,
+		created_by INT NOT NULL,
 		value FLOAT NOT NULL,
 		FOREIGN KEY(created_by) REFERENCES users(id)
 	);`

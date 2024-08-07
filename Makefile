@@ -7,6 +7,9 @@ css:
 run: build-app
 	@./bin/app
 
+templ:
+	@templ generate --watch
+
 dev:
 	@./bin/air
 

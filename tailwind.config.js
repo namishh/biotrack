@@ -7,6 +7,9 @@ module.exports = {
     extend: {
       ...colors,
     },
+    fontFamily: {
+      sans: ["Raleway"],
+    },
   },
   plugins: [],
 };

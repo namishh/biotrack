@@ -3,8 +3,12 @@
 ### Running Locally
 
 ```bash
+# Generate Templates
+$ make templ
+
 ## To compile tailwind
 $ make css
+
 # In another terminal
 $ make dev
 ```

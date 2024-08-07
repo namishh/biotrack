@@ -11,6 +11,7 @@ type User struct {
 	Password  string `json:"password"`
 	Username  string `json:"username"`
 	CreatedAt string `json:"created_at"`
+	Profile   Profile
 }
 
 type Profile struct {
@@ -27,18 +28,14 @@ type Profile struct {
 }
 
 type UserService struct {
-	User         User
-	Profile      Profile
-	ProfileStore database.DatabaseStore
-	UserStore    database.DatabaseStore
+	User      User
+	UserStore database.DatabaseStore
 }
 
-func NewUserService(user User, userStore database.DatabaseStore, profile Profile, profileStore database.DatabaseStore) *UserService {
+func NewUserService(user User, userStore database.DatabaseStore) *UserService {
 	return &UserService{
-		User:         user,
-		UserStore:    userStore,
-		Profile:      profile,
-		ProfileStore: profileStore,
+		User:      user,
+		UserStore: userStore,
 	}
 }
 
@@ -52,18 +49,11 @@ func (us *UserService) CreateUser(u User) error {
 	stmt := `INSERT INTO users (email, password, username) VALUES ($1, $2, $3)`
 
 	_, err = us.UserStore.DB.Exec(stmt, u.Email, string(hashedPassword), u.Username)
-	if err != nil {
-		return err
-	}
-
-	// create user profile
-	stmt = `INSERT INTO profiles (profile_of, profile_picture) VALUES ($1, $2)`
-	_, err = us.ProfileStore.DB.Exec(stmt, u.ID, "default.jpg")
-
+	
 	return err
 }
 
-func (us *UserService) GetUserByEmail(email string) (User, error) {
+func (us *UserService) CheckEmail(email string) (User, error) {
 	query := `SELECT id, email, password, username FROM users
 		WHERE email = ?`
 
@@ -86,6 +76,6 @@ func (us *UserService) GetUserByEmail(email string) (User, error) {
 	if err != nil {
 		return User{}, err
 	}
-	
+
 	return us.User, nil
 }
