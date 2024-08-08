@@ -1,0 +1,23 @@
+package pages
+
+import "github.com/namishh/biotrack/views/layouts"
+
+templ SignIn(fromProtected bool) {
+	<section class="mx-auto w-fit flex flex-col gap-8 text-center bg-zinc-900">
+		hello
+		if !fromProtected {
+		}
+	</section>
+}
+
+templ SignInIndex(
+	title,
+	username string,
+	fromProtected bool,
+	isError bool,
+	cmp templ.Component,
+) {
+	@layouts.Base(title, username, fromProtected, isError) {
+		@cmp
+	}
+}

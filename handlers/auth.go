@@ -82,8 +82,8 @@ func (ah *AuthHandler) HomeHandler(c echo.Context) error {
 	if !ok {
 		return errors.New("invalid type for key 'FROMPROTECTED'")
 	}
-	homeView := pages.Home(fromProtected)
 	// isError = false
+	homeView := pages.Home(fromProtected)
 	c.Set("ISERROR", false)
 
 	return renderView(c, pages.HomeIndex(
