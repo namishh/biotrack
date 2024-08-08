@@ -14,10 +14,10 @@ $ make dev
 ```
 
 ### Todo
-- [ ] Setup
+- [x] Setup
   - [x] Setup echo
   - [x] Tailwindcss
-  - [ ] Get templ working
+  - [x] Get templ working
   - [x] Sqlite 3
 - [ ] Authentication
   - [ ] Register
