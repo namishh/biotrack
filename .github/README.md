@@ -13,6 +13,11 @@ $ make css
 $ make dev
 ```
 
+### Screenshots 
+
+![s1](https://i.imgur.com/DUTp4qs.png)
+![s2](https://i.imgur.com/k5vYIF4.png)
+
 ### Todo
 - [x] Setup
   - [x] Setup echo

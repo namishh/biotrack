@@ -30,7 +30,7 @@ func main() {
 
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte(SECRET_KEY))))
 
-	e.Static("/static", "public/assets")
+	e.Static("/static", "public")
 
 	store, err := database.NewDatabaseStore(DB_NAME)
 
