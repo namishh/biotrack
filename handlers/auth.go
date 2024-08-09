@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"net/mail"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/pages"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const auth_key = "auth_key"
@@ -21,6 +23,7 @@ const tzone_key = "tzone_key"
 type AuthService interface {
 	CreateUser(u services.User) error
 	CheckEmail(email string) (services.User, error)
+	CheckUsername(usr string) (services.User, error)
 }
 
 type AuthHandler struct {
@@ -138,6 +141,12 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 			c.Set("ISERROR", true)
 		}
 
+		_, err := ah.UserServices.CheckEmail(email)
+		if err == nil {
+			errs["email"] = "Account with this email already exists"
+			c.Set("ISERROR", true)
+		}
+
 		// password valid: minimum 4 letters
 		if len(password) < 4 {
 			errs["password"] = "Password must be at least 4 characters"
@@ -146,6 +155,13 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 		// username valid: minimum 4 letters
 		if len(username) < 4 {
 			errs["username"] = "Username must be at least 4 characters"
+		}
+
+		_, err = ah.UserServices.CheckUsername(username)
+		log.Print(err)
+		if err == nil {
+			errs["username"] = "Account with this username already exists"
+			c.Set("ISERROR", true)
 		}
 
 		if errs["username"] != "" || errs["email"] != "" || errs["password"] != "" {
@@ -161,6 +177,15 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 				view,
 			))
 		}
+
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+		user := services.User{
+			Email:    email,
+			Username: username,
+			Password: string(hashedPassword),
+		}
+		ah.UserServices.CreateUser(user)
 
 		return c.Redirect(http.StatusSeeOther, "/login")
 	}

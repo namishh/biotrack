@@ -79,3 +79,30 @@ func (us *UserService) CheckEmail(email string) (User, error) {
 
 	return us.User, nil
 }
+
+func (us *UserService) CheckUsername(usr string) (User, error) {
+	query := `SELECT id, email, password, username FROM users
+		WHERE username = ?`
+
+	stmt, err := us.UserStore.DB.Prepare(query)
+	if err != nil {
+		return User{}, err
+	}
+
+	defer stmt.Close()
+
+	us.User.Username = usr
+	err = stmt.QueryRow(
+		us.User.Username,
+	).Scan(
+		&us.User.ID,
+		&us.User.Email,
+		&us.User.Password,
+		&us.User.Username,
+	)
+	if err != nil {
+		return User{}, err
+	}
+
+	return us.User, nil
+}
