@@ -1,8 +1,6 @@
 package layouts
 
-import "github.com/namishh/biotrack/views/components"
-
-templ Base(title, username string, fromProtected, isError bool) {
+templ WithoutNavBase(title, username string, fromProtected, isError bool) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -22,16 +20,11 @@ templ Base(title, username string, fromProtected, isError bool) {
 			<script src="https://unpkg.com/htmx.org@2.0.1"></script>
 		</head>
 		<body class="bg-zinc-950 overflow-x-hidden" hx-boost="true">
-			<div class="min-h-screen fixed w-screen bg-gradient-to-b from-purple-500/10 via-[#00000000] via-30% to-purple-500/15"></div>
+			<div class="min-h-screen z-[1] fixed w-screen bg-gradient-to-b from-purple-500/10 via-[#00000000] via-30% to-purple-500/15"></div>
 			<div
-				class="h-screen fixed  w-screen bg-[radial-gradient(169.40%_89.55%_at_94.76%_6.29%,rgba(0,0,0,0.30)_0%,rgba(0,0,0,0.5)_100%)]"
+				class="h-screen fixed z-[1]  w-screen bg-[radial-gradient(169.40%_89.55%_at_94.76%_6.29%,rgba(0,0,0,0.30)_0%,rgba(0,0,0,0.5)_100%)]"
 			></div>
-			<header>
-				if !isError {
-					@components.Navbar(username, fromProtected)
-				}
-			</header>
-			<main>
+			<main class="">
 				{ children... }
 			</main>
 		</body>

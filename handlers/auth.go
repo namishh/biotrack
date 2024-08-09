@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
+	"net/mail"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo-contrib/session"
@@ -77,6 +79,11 @@ func (ah *AuthHandler) authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+func valid(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
+}
+
 func (ah *AuthHandler) HomeHandler(c echo.Context) error {
 	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
 	if !ok {
@@ -92,5 +99,85 @@ func (ah *AuthHandler) HomeHandler(c echo.Context) error {
 		fromProtected,
 		c.Get("ISERROR").(bool),
 		homeView,
+	))
+}
+
+func (ah *AuthHandler) LoginHandler(c echo.Context) error {
+	errs := make(map[string]string)
+	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
+	if !ok {
+		return errors.New("invalid type for key 'FROMPROTECTED'")
+	}
+	// isError = false
+	view := pages.Login(fromProtected, errs)
+	c.Set("ISERROR", false)
+
+	return renderView(c, pages.LoginIndex(
+		"Login",
+		"",
+		fromProtected,
+		c.Get("ISERROR").(bool),
+		view,
+	))
+}
+
+func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
+
+	errs := make(map[string]string)
+	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
+
+	if c.Request().Method == "POST" {
+		// Validating data here
+		email := c.FormValue("email")
+		password := c.FormValue("password")
+		username := c.FormValue("username")
+
+		// check if email is valid
+		if !valid(email) {
+			errs["email"] = "Invalid email address"
+			c.Set("ISERROR", true)
+		}
+
+		// password valid: minimum 4 letters
+		if len(password) < 4 {
+			errs["password"] = "Password must be at least 4 characters"
+		}
+
+		// username valid: minimum 4 letters
+		if len(username) < 4 {
+			errs["username"] = "Username must be at least 4 characters"
+		}
+
+		if errs["username"] != "" || errs["email"] != "" || errs["password"] != "" {
+			view := pages.Register(fromProtected, errs)
+
+			c.Set("ISERROR", false)
+
+			return renderView(c, pages.RegisterIndex(
+				"Register",
+				"",
+				fromProtected,
+				c.Get("ISERROR").(bool),
+				view,
+			))
+		}
+
+		return c.Redirect(http.StatusSeeOther, "/login")
+	}
+
+	if !ok {
+		return errors.New("invalid type for key 'FROMPROTECTED'")
+	}
+
+	view := pages.Register(fromProtected, errs)
+
+	c.Set("ISERROR", false)
+
+	return renderView(c, pages.RegisterIndex(
+		"Register",
+		"",
+		fromProtected,
+		c.Get("ISERROR").(bool),
+		view,
 	))
 }
