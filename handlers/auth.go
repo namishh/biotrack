@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 	"net/mail"
+	"strings"
 
 	"github.com/a-h/templ"
+	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/namishh/biotrack/services"
@@ -108,8 +110,78 @@ func (ah *AuthHandler) HomeHandler(c echo.Context) error {
 func (ah *AuthHandler) LoginHandler(c echo.Context) error {
 	errs := make(map[string]string)
 	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
+
+	if fromProtected {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+
 	if !ok {
 		return errors.New("invalid type for key 'FROMPROTECTED'")
+	}
+
+	if c.Request().Method == "POST" {
+		tzone := ""
+		if len(c.Request().Header["X-Timezone"]) != 0 {
+			tzone = c.Request().Header["X-Timezone"][0]
+		}
+
+		log.Print(tzone)
+
+		user, err := ah.UserServices.CheckEmail(c.FormValue("email"))
+		if err != nil {
+			if strings.Contains(err.Error(), "no rows in result set") {
+				c.Set("ISERROR", true)
+				errs["dne"] = "User with this email does not exist."
+				view := pages.Login(fromProtected, errs)
+
+				return renderView(c, pages.LoginIndex(
+					"Login",
+					"",
+					fromProtected,
+					c.Get("ISERROR").(bool),
+					view,
+				))
+			}
+		}
+
+		err = bcrypt.CompareHashAndPassword(
+			[]byte(user.Password),
+			[]byte(c.FormValue("password")),
+		)
+		if err != nil {
+			c.Set("ISERROR", true)
+			errs["pass"] = "Incorrect Password"
+			view := pages.Login(fromProtected, errs)
+
+			return renderView(c, pages.LoginIndex(
+				"Login",
+				"",
+				fromProtected,
+				c.Get("ISERROR").(bool),
+				view,
+			))
+		}
+
+		// Log in the user
+		sess, _ := session.Get(auth_sessions_key, c)
+		sess.Options = &sessions.Options{
+			Path:     "/",
+			MaxAge:   3600, // in seconds
+			HttpOnly: true,
+		}
+
+		// Set user as authenticated, their username,
+		// their ID and the client's time zone
+		sess.Values = map[interface{}]interface{}{
+			auth_key:      true,
+			user_id_key:   user.ID,
+			user_name_key: user.Username,
+			tzone_key:     tzone,
+		}
+		sess.Save(c.Request(), c.Response())
+
+		return c.Redirect(http.StatusSeeOther, "/")
+
 	}
 	// isError = false
 	view := pages.Login(fromProtected, errs)
@@ -128,6 +200,10 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 
 	errs := make(map[string]string)
 	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
+
+	if fromProtected {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
 
 	if c.Request().Method == "POST" {
 		// Validating data here
@@ -178,12 +254,10 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 			))
 		}
 
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-
 		user := services.User{
 			Email:    email,
 			Username: username,
-			Password: string(hashedPassword),
+			Password: password,
 		}
 		ah.UserServices.CreateUser(user)
 
@@ -205,4 +279,26 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 		c.Get("ISERROR").(bool),
 		view,
 	))
+}
+
+func (ah *AuthHandler) LogoutHandler(c echo.Context) error {
+	sess, _ := session.Get(auth_sessions_key, c)
+	fromProtected, _ := c.Get("FROMPROTECTED").(bool)
+
+	if !fromProtected {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+	// Revoke users authentication
+	sess.Values = map[interface{}]interface{}{
+		auth_key:      false,
+		user_id_key:   "",
+		user_name_key: "",
+		tzone_key:     "",
+	}
+	sess.Save(c.Request(), c.Response())
+
+	// fromProtected = false
+	c.Set("FROMPROTECTED", false)
+
+	return c.Redirect(http.StatusSeeOther, "/login")
 }

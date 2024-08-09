@@ -19,11 +19,11 @@ $ make dev
   - [x] Tailwindcss
   - [x] Get templ working
   - [x] Sqlite 3
-- [ ] Authentication
-  - [ ] Register
-  - [ ] Login
-  - [ ] Logout
-  - [ ] Protected Routes
+- [x] Authentication
+  - [x] Register
+  - [x] Login
+  - [x] Logout
+  - [x] Protected Routes
 - [ ] User
   - [ ] Profile Customization
 

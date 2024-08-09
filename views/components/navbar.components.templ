@@ -10,8 +10,8 @@ templ Navbar(username string, fromProtected bool) {
 			// LINKS
 			<div class="flex items-center gap-3">
 				if fromProtected {
-					<a href="/profile" class="text-white">Profile</a>
 					<a href="/stats" class="text-white">Stats</a>
+					<a href="/profile" class=" px-4 py-1 bg-purple-400 rounded-lg text-black font-bold">Profile</a>
 				} else {
 					<a href="/register" class=" px-4 text-white ">Register</a>
 					<a href="/login" class=" px-4 py-1 bg-purple-400 rounded-lg text-black font-bold">Login</a>
