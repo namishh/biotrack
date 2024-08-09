@@ -2,7 +2,7 @@ bin
 .env
 node_modules
 tmp
-public/assets/app.css
+public/*.css
 views/*/*.go
 views/*/*.txt
 .env
