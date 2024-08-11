@@ -54,10 +54,8 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		weight FLOAT,
 		height FLOAT,
 		birthday DATE,
-		streak INTEGER DEFAULT 0,
 		bio TEXT,
 		profile_of INT,
-		last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY(profile_of) REFERENCES users(id)
 	);`
 

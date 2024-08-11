@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"errors"
 	"log"
 	"net/http"
@@ -16,16 +17,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const auth_key = "auth_key"
-const auth_sessions_key = "auth_session_key"
-const user_id_key = "user_id_key"
-const user_name_key = "user_name_key"
-const tzone_key = "tzone_key"
+const auth_key string = "auth_key"
+const auth_sessions_key string = "auth_session_key"
+const user_id_key string = "user_id_key"
+const user_name_key string = "user_name_key"
+const tzone_key string = "tzone_key"
 
 type AuthService interface {
 	CreateUser(u services.User) error
+	CreateDefaultProfile(u services.User) (sql.Result, error)
 	CheckEmail(email string) (services.User, error)
 	CheckUsername(usr string) (services.User, error)
+	CheckProfile(userId int) (services.Profile, error)
 }
 
 type AuthHandler struct {
@@ -166,7 +169,7 @@ func (ah *AuthHandler) LoginHandler(c echo.Context) error {
 		sess, _ := session.Get(auth_sessions_key, c)
 		sess.Options = &sessions.Options{
 			Path:     "/",
-			MaxAge:   3600, // in seconds
+			MaxAge:   60 * 60 * 24 * 7, // 1 week
 			HttpOnly: true,
 		}
 
@@ -259,6 +262,8 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 			Username: username,
 			Password: password,
 		}
+
+		ah.UserServices.CreateDefaultProfile(user)
 		ah.UserServices.CreateUser(user)
 
 		return c.Redirect(http.StatusSeeOther, "/login")
@@ -301,4 +306,41 @@ func (ah *AuthHandler) LogoutHandler(c echo.Context) error {
 	c.Set("FROMPROTECTED", false)
 
 	return c.Redirect(http.StatusSeeOther, "/login")
+}
+
+func (ah *AuthHandler) ProfileHandler(c echo.Context) error {
+	errs := make(map[string]string)
+	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
+
+	if !fromProtected {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+
+	if c.Request().Method == "POST" {
+	}
+
+	if !ok {
+		return errors.New("invalid type for key 'FROMPROTECTED'")
+	}
+
+	log.Print(c.Get(user_id_key))
+	user, err := ah.UserServices.CheckUsername(c.Get(user_name_key).(string))
+
+	if err != nil {
+		return c.Redirect(200, "/login")
+	}
+
+	profile, err := ah.UserServices.CheckProfile(user.ID)
+
+	view := pages.Profile(fromProtected, user, profile, errs)
+
+	c.Set("ISERROR", false)
+
+	return renderView(c, pages.ProfileIndex(
+		"Profile",
+		"",
+		fromProtected,
+		c.Get("ISERROR").(bool),
+		view,
+	))
 }

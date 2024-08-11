@@ -37,6 +37,7 @@ func main() {
 	us := services.NewUserService(services.User{}, store)
 	ah := handlers.NewAuthHandler(us)
 
+	
 	if err != nil {
 		e.Logger.Fatalf("failed to create store: %s", err)
 	}
