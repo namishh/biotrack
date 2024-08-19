@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/namishh/biotrack/database"
 )
@@ -16,7 +17,6 @@ type Profile struct {
 	Streak         int     `json:"streak"`
 	Bio            string  `json:"bio"`
 	ProfileOf      int     `json:"profile_of"`
-	LastLogin      string  `json:"last_login"`
 }
 
 type ProfileService struct {
@@ -41,16 +41,24 @@ func (ps *ProfileService) CreateDefaultProfile(u User) error {
 }
 
 func (ps *ProfileService) GetProfileByUserId(id int) (Profile, error) {
-	profile := Profile{}
-	stmt := `SELECT id, level, profile_picture, weight, height, birthday, bio, profile_of, last_login FROM profiles WHERE profile_of = ?`
+	query := `SELECT id, level, profile_picture, weight, height, birthday, bio FROM profile WHERE profile_of = ?`
 
-	row := ps.ProfileStore.DB.QueryRow(stmt, id)
-
-	err := row.Scan(&profile.ID, &profile.Level, &profile.ProfilePicture, &profile.Weight, &profile.Height, &profile.Birthday, &profile.Bio, &profile.ProfileOf, &profile.LastLogin)
-
+	stmt, err := ps.ProfileStore.DB.Prepare(query)
 	if err != nil {
+		log.Print(err)
 		return Profile{}, err
 	}
 
-	return profile, nil
+	defer stmt.Close()
+
+	ps.Profile.ProfileOf = id
+
+	err = stmt.QueryRow(ps.Profile.ProfileOf).Scan(&ps.Profile.ID, &ps.Profile.Level, &ps.Profile.ProfilePicture, &ps.Profile.Weight, &ps.Profile.Height, &ps.Profile.Birthday, &ps.Profile.Bio)
+
+	if err != nil {
+		log.Print(err)
+		return Profile{}, err
+	}
+
+	return ps.Profile, nil
 }

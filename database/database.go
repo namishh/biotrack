@@ -51,10 +51,10 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		level INTEGER DEFAULT 0,
 		profile_picture VARCHAR(255),
-		weight FLOAT,
-		height FLOAT,
-		birthday DATE,
-		bio TEXT,
+		weight FLOAT DEFAULT 0,
+		height FLOAT DEFAULT 0,
+		birthday DATE DEFAULT '1900-01-01',
+		bio TEXT DEFAULT '',
 		profile_of INT,
 		FOREIGN KEY(profile_of) REFERENCES users(id)
 	);`
@@ -72,17 +72,6 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		created_by INT NOT NULL,
 		value FLOAT NOT NULL,
 		FOREIGN KEY(created_by) REFERENCES users(id)
-	);`
-
-	_, err = DB.Exec(stmt)
-	if err != nil {
-		return fmt.Errorf("Failed to create table: %s", err)
-	}
-
-	stmt = `CREATE TABLE IF NOT EXISTS avatar (
-		username TEXT PRIMARY KEY,
-		fromcolor TEXT NOT NULL,
-		tocolor TEXT NOT NULL
 	);`
 
 	_, err = DB.Exec(stmt)

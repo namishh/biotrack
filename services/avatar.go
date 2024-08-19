@@ -24,7 +24,7 @@ func NewAvatarService(avatar Avatar, avatarStore database.DatabaseStore) *Avatar
 }
 
 func djb2(str string) int {
-	hash := 5381
+	hash := 6969
 	for _, char := range str {
 		hash = ((hash << 5) + hash) + int(char)
 	}

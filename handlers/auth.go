@@ -289,6 +289,7 @@ func (ah *AuthHandler) LogoutHandler(c echo.Context) error {
 
 func (ah *AuthHandler) ProfileHandler(c echo.Context) error {
 	errs := make(map[string]string)
+	formdata := make(map[string]string)
 	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
 
 	if !fromProtected {
@@ -302,16 +303,15 @@ func (ah *AuthHandler) ProfileHandler(c echo.Context) error {
 		return errors.New("invalid type for key 'FROMPROTECTED'")
 	}
 
-	log.Print(c.Get(user_id_key))
+	p, err := ah.ProfileServices.GetProfileByUserId(c.Get(user_id_key).(int))
+
 	user, err := ah.UserServices.CheckUsername(c.Get(user_name_key).(string))
 
 	if err != nil {
 		return c.Redirect(200, "/login")
 	}
 
-	p := services.Profile{}
-
-	view := profile.Profile(fromProtected, user, p, errs)
+	view := profile.Profile(fromProtected, user, p, errs, formdata)
 
 	c.Set("ISERROR", false)
 
