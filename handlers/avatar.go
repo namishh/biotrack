@@ -3,12 +3,9 @@ package handlers
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/namishh/biotrack/services"
 )
 
 const size = 192
@@ -25,16 +22,11 @@ func createSVG(gradient map[string]string) string {
 	</svg>`, size, size, size, size, gradient["fromColor"], gradient["toColor"], size, size)
 }
 
-func Avatar(c echo.Context) error {
-	name := c.Param("user")
-	parts := strings.Split(name, ".")
-	username := parts[0]
+func (ah *AuthHandler) Avatar(c echo.Context) error {
+	username := c.Param("name")
 
-	if username == "" {
-		username = fmt.Sprintf("%f", rand.Float64())
-	}
+	gradient := ah.AvatarServices.GenerateGradient(username)
 
-	gradient := services.GenerateGradient(username)
 	log.Print(gradient)
 
 	svg := createSVG(gradient)

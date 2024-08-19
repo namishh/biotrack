@@ -1,12 +1,27 @@
-// An avatar service like https://avatar.vercel.sh
 package services
 
 import (
-	"crypto/sha256"
 	"math"
 
 	"github.com/lucasb-eyer/go-colorful"
+	"github.com/namishh/biotrack/database"
 )
+
+type Avatar struct {
+	Id        int
+	Username  string
+	FromColor string
+	ToColor   string
+}
+
+type AvatarService struct {
+	Avatar      Avatar
+	AvatarStore database.DatabaseStore
+}
+
+func NewAvatarService(avatar Avatar, avatarStore database.DatabaseStore) *AvatarService {
+	return &AvatarService{Avatar: avatar, AvatarStore: avatarStore}
+}
 
 func djb2(str string) int {
 	hash := 5381
@@ -16,21 +31,13 @@ func djb2(str string) int {
 	return hash
 }
 
-func GenerateGradient(username string) map[string]string {
-	colors := []string{
-		"#a855f7", // Purple
-		"#7c3aed",
-		"#f43f5e",
-		"#faf5ff", // White
-	}
+func (as *AvatarService) GenerateGradient(username string) map[string]string {
+	h := float64(djb2(username)%360) / 360.0 // Normalize to [0, 1]
+	c1 := colorful.Hsv(h*360, 0.95, 1)
 
-	hash := sha256.Sum256([]byte(username))
-	h := float64(int(hash[0]) % len(colors)) // Use the first byte of the hash to select a color
-	c1, _ := colorful.Hex(colors[int(h)])    // First color
-
-	// Calculate the next color in the palette
-	h2 := math.Mod(h+1.0, float64(len(colors)))
-	c2, _ := colorful.Hex(colors[int(h2)]) // Second color
+	// Calculate the triad color
+	h2 := math.Mod(h+1.0/3, 1.0) // Add 1/3 for triad, keep in [0, 1]
+	c2 := colorful.Hsv(h2*360, 0.95, 1)
 
 	return map[string]string{
 		"fromColor": c1.Hex(),

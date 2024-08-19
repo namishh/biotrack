@@ -1,8 +1,6 @@
 package services
 
 import (
-	"log"
-
 	"github.com/namishh/biotrack/database"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -28,20 +26,17 @@ func NewUserService(user User, userStore database.DatabaseStore) *UserService {
 	}
 }
 
-func (us *UserService) CreateUser(u User) error {
+func (us *UserService) CreateUser(u User) (User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return User{}, err
 	}
 
 	// create user himself
-	stmt := `INSERT INTO users (email, password, username) VALUES ($1, $2, $3)`
+	stmt := `INSERT INTO users (email, password, username) VALUES (?, ?, ?) RETURNING id`
+	err = us.UserStore.DB.QueryRow(stmt, u.Email, string(hashedPassword), u.Username).Scan(&u.ID)
 
-	s, err := us.UserStore.DB.Exec(stmt, u.Email, string(hashedPassword), u.Username)
-
-	log.Print(s)
-
-	return err
+	return u, err
 }
 
 func (us *UserService) CheckEmail(email string) (User, error) {

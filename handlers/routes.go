@@ -15,7 +15,7 @@ func SetupRoutes(e *echo.Echo, ah *AuthHandler) {
 	e.POST("/login", ah.flagsMiddleware(ah.LoginHandler))
 
 	e.GET("/logout", ah.flagsMiddleware(ah.LogoutHandler))
-	e.GET("/avatar/:name", ah.flagsMiddleware(Avatar))
+	e.GET("/avatar/:name", ah.flagsMiddleware(ah.Avatar))
 
 	e.GET("/profile", ah.authMiddleware(ah.ProfileHandler))
 	e.POST("/profile", ah.authMiddleware(ah.ProfileHandler))

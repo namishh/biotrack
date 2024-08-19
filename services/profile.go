@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/namishh/biotrack/database"
 )
@@ -34,10 +33,24 @@ func NewProfileService(profile Profile, profileStore database.DatabaseStore) *Pr
 
 func (ps *ProfileService) CreateDefaultProfile(u User) error {
 	// create user himself
-	stmt := `INSERT INTO profiles (profile_of, profile_picture) VALUES ($1, $2)`
-	log.Print(u)
+	stmt := `INSERT INTO profile (profile_of, profile_picture) VALUES (?, ?)`
 	avatarLink := fmt.Sprintf("/avatar/%s", u.Username)
-	_, err := ps.ProfileStore.DB.Exec(stmt, u.ID, avatarLink) 
+	_, err := ps.ProfileStore.DB.Exec(stmt, u.ID, avatarLink)
 
 	return err
+}
+
+func (ps *ProfileService) GetProfileByUserId(id int) (Profile, error) {
+	profile := Profile{}
+	stmt := `SELECT id, level, profile_picture, weight, height, birthday, bio, profile_of, last_login FROM profiles WHERE profile_of = ?`
+
+	row := ps.ProfileStore.DB.QueryRow(stmt, id)
+
+	err := row.Scan(&profile.ID, &profile.Level, &profile.ProfilePicture, &profile.Weight, &profile.Height, &profile.Birthday, &profile.Bio, &profile.ProfileOf, &profile.LastLogin)
+
+	if err != nil {
+		return Profile{}, err
+	}
+
+	return profile, nil
 }

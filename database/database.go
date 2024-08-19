@@ -79,6 +79,17 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		return fmt.Errorf("Failed to create table: %s", err)
 	}
 
+	stmt = `CREATE TABLE IF NOT EXISTS avatar (
+		username TEXT PRIMARY KEY,
+		fromcolor TEXT NOT NULL,
+		tocolor TEXT NOT NULL
+	);`
+
+	_, err = DB.Exec(stmt)
+	if err != nil {
+		return fmt.Errorf("Failed to create table: %s", err)
+	}
+
 	return nil
 }
 

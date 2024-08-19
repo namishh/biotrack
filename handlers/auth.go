@@ -23,22 +23,28 @@ const user_name_key string = "user_name_key"
 const tzone_key string = "tzone_key"
 
 type AuthService interface {
-	CreateUser(u services.User) error
+	CreateUser(u services.User) (services.User, error)
 	CheckEmail(email string) (services.User, error)
 	CheckUsername(usr string) (services.User, error)
 }
 
 type ProfileService interface {
 	CreateDefaultProfile(u services.User) error
+	GetProfileByUserId(id int) (services.Profile, error)
+}
+
+type AvatarService interface {
+	GenerateGradient(username string) map[string]string
 }
 
 type AuthHandler struct {
 	UserServices    AuthService
 	ProfileServices ProfileService
+	AvatarServices  AvatarService
 }
 
-func NewAuthHandler(us AuthService, ps ProfileService) *AuthHandler {
-	return &AuthHandler{UserServices: us, ProfileServices: ps}
+func NewAuthHandler(us AuthService, ps ProfileService, as AvatarService) *AuthHandler {
+	return &AuthHandler{UserServices: us, ProfileServices: ps, AvatarServices: as}
 }
 
 func renderView(c echo.Context, cmp templ.Component) error {
@@ -223,8 +229,10 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 			Password: password,
 		}
 
-		ah.UserServices.CreateUser(user)
-		u, _ := ah.UserServices.CheckUsername(user.Username)
+		u, err := ah.UserServices.CreateUser(user)
+		if err != nil {
+			return err
+		}
 		ah.ProfileServices.CreateDefaultProfile(u)
 
 		return c.Redirect(http.StatusSeeOther, "/login")

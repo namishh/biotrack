@@ -36,7 +36,9 @@ func main() {
 
 	us := services.NewUserService(services.User{}, store)
 	ps := services.NewProfileService(services.Profile{}, store)
-	ah := handlers.NewAuthHandler(us, ps)
+	as := services.NewAvatarService(services.Avatar{}, store)
+
+	ah := handlers.NewAuthHandler(us, ps, as)
 
 	if err != nil {
 		e.Logger.Fatalf("failed to create store: %s", err)
