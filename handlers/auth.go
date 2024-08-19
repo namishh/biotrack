@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"errors"
 	"log"
 	"net/http"
@@ -25,66 +24,27 @@ const tzone_key string = "tzone_key"
 
 type AuthService interface {
 	CreateUser(u services.User) error
-	CreateDefaultProfile(u services.User) (sql.Result, error)
 	CheckEmail(email string) (services.User, error)
 	CheckUsername(usr string) (services.User, error)
-	CheckProfile(userId int) (services.Profile, error)
+}
+
+type ProfileService interface {
+	CreateDefaultProfile(u services.User) error
 }
 
 type AuthHandler struct {
-	UserServices AuthService
+	UserServices    AuthService
+	ProfileServices ProfileService
 }
 
-func NewAuthHandler(us AuthService) *AuthHandler {
-	return &AuthHandler{UserServices: us}
+func NewAuthHandler(us AuthService, ps ProfileService) *AuthHandler {
+	return &AuthHandler{UserServices: us, ProfileServices: ps}
 }
 
 func renderView(c echo.Context, cmp templ.Component) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTML)
 
 	return cmp.Render(c.Request().Context(), c.Response().Writer)
-}
-
-func (ah *AuthHandler) flagsMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		sess, _ := session.Get(auth_sessions_key, c)
-		if auth, ok := sess.Values[auth_key].(bool); !ok || !auth {
-			c.Set("FROMPROTECTED", false)
-
-			return next(c)
-		}
-
-		c.Set("FROMPROTECTED", true)
-
-		return next(c)
-	}
-}
-
-func (ah *AuthHandler) authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		sess, _ := session.Get(auth_sessions_key, c)
-		if auth, ok := sess.Values[auth_key].(bool); !ok || !auth {
-			c.Set("FROMPROTECTED", false)
-			return echo.NewHTTPError(echo.ErrUnauthorized.Code, "Please provide valid credentials")
-		}
-
-		if userId, ok := sess.Values[user_id_key].(int); ok && userId != 0 {
-			c.Set(user_id_key, userId) // set the user_id in the context
-		}
-
-		if username, ok := sess.Values[user_name_key].(string); ok && len(username) != 0 {
-			c.Set(user_name_key, username) // set the username in the context
-		}
-
-		if tzone, ok := sess.Values[tzone_key].(string); ok && len(tzone) != 0 {
-			c.Set(tzone_key, tzone) // set the client's time zone in the context
-		}
-
-		// fromProtected = true
-		c.Set("FROMPROTECTED", true)
-
-		return next(c)
-	}
 }
 
 func valid(email string) bool {
@@ -263,8 +223,9 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 			Password: password,
 		}
 
-		ah.UserServices.CreateDefaultProfile(user)
 		ah.UserServices.CreateUser(user)
+		u, _ := ah.UserServices.CheckUsername(user.Username)
+		ah.ProfileServices.CreateDefaultProfile(u)
 
 		return c.Redirect(http.StatusSeeOther, "/login")
 	}
@@ -330,7 +291,7 @@ func (ah *AuthHandler) ProfileHandler(c echo.Context) error {
 		return c.Redirect(200, "/login")
 	}
 
-	profile, err := ah.UserServices.CheckProfile(user.ID)
+	profile := services.Profile{}
 
 	view := pages.Profile(fromProtected, user, profile, errs)
 

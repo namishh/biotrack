@@ -35,9 +35,9 @@ func main() {
 	store, err := database.NewDatabaseStore(DB_NAME)
 
 	us := services.NewUserService(services.User{}, store)
-	ah := handlers.NewAuthHandler(us)
+	ps := services.NewProfileService(services.Profile{}, store)
+	ah := handlers.NewAuthHandler(us, ps)
 
-	
 	if err != nil {
 		e.Logger.Fatalf("failed to create store: %s", err)
 	}

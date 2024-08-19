@@ -47,7 +47,7 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		return fmt.Errorf("Failed to create table: %s", err)
 	}
 
-	stmt = `CREATE TABLE IF NOT EXISTS profiles (
+	stmt = `CREATE TABLE IF NOT EXISTS profile (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		level INTEGER DEFAULT 0,
 		profile_picture VARCHAR(255),
