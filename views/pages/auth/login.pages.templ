@@ -1,8 +1,8 @@
-package pages
+package auth 
 
 import "github.com/namishh/biotrack/views/layouts"
 
-templ Login(fromProtected bool, errors map[string]string) {
+templ Login(fromProtected bool, formdata map[string]string, errors map[string]string) {
 	<section class="text-white h-screen z-[100] flex justify-center items-center">
 		<div class="w-full flex z-[100] xl:w-1/2 h-screen overflow-hidden relative xl:h-[35rem] bg-black z-[100] rounded-none xl:rounded-2xl">
 			<div class="p-8 z-[1] justify-center h-full w-full xl:w-1/2 r flex flex-col gap-2">
@@ -15,14 +15,22 @@ templ Login(fromProtected bool, errors map[string]string) {
 				<form class="flex mt-4 gap-4 flex-col" action="" method="post">
 					<div class="flex flex-col">
 						<label for="email" class="ml-2">Email</label>
-						<input autocomplete="false" name="email" type="email" placeholder="johndoehas@ligma.com" class="focus:outline-none outline-none p-2 rounded-xl bg-zinc-900/60 mt-3" id="email"/>
+						if formdata["email"] != "" {
+							<input autocomplete="false" name="email" value={ formdata["email"] } type="email" placeholder="johndoehas@ligma.com" class="focus:outline-none outline-none p-2 rounded-xl bg-zinc-900/60 mt-3" id="email"/>
+						} else {
+							<input autocomplete="false" name="email" type="email" placeholder="johndoehas@ligma.com" class="focus:outline-none outline-none p-2 rounded-xl bg-zinc-900/60 mt-3" id="email"/>
+						}
 						if errors["dne"] != "" {
 							<p class="text-purple-300 ml-2 my-1 text-sm">{ errors["dne"] }</p>
 						}
 					</div>
 					<div class="flex flex-col">
 						<label for="password" class="ml-2">Your Password</label>
-						<input type="password" class="focus:outline-none outline-none p-2 rounded-xl bg-zinc-900/60 mt-3" id="password" name="password"/>
+						if formdata["password"] != "" {
+							<input type="password" value={ formdata["password"] } class="focus:outline-none outline-none p-2 rounded-xl bg-zinc-900/60 mt-3" id="password" name="password"/>
+						} else {
+							<input type="password" class="focus:outline-none outline-none p-2 rounded-xl bg-zinc-900/60 mt-3" id="password" name="password"/>
+						}
 						if errors["pass"] != "" {
 							<p class="text-purple-300 ml-2 my-1 text-sm">{ errors["pass"] }</p>
 						}

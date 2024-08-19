@@ -13,6 +13,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/pages"
+	"github.com/namishh/biotrack/views/pages/auth"
+	"github.com/namishh/biotrack/views/pages/profile"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -78,6 +80,7 @@ func (ah *AuthHandler) HomeHandler(c echo.Context) error {
 
 func (ah *AuthHandler) LoginHandler(c echo.Context) error {
 	errs := make(map[string]string)
+	formdata := make(map[string]string)
 	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
 
 	if fromProtected {
@@ -94,6 +97,9 @@ func (ah *AuthHandler) LoginHandler(c echo.Context) error {
 			tzone = c.Request().Header["X-Timezone"][0]
 		}
 
+		formdata["email"] = c.FormValue("email")
+		formdata["password"] = c.FormValue("password")
+
 		log.Print(tzone)
 
 		user, err := ah.UserServices.CheckEmail(c.FormValue("email"))
@@ -101,9 +107,9 @@ func (ah *AuthHandler) LoginHandler(c echo.Context) error {
 			if strings.Contains(err.Error(), "no rows in result set") {
 				c.Set("ISERROR", true)
 				errs["dne"] = "User with this email does not exist."
-				view := pages.Login(fromProtected, errs)
+				view := auth.Login(fromProtected, formdata, errs)
 
-				return renderView(c, pages.LoginIndex(
+				return renderView(c, auth.LoginIndex(
 					"Login",
 					"",
 					fromProtected,
@@ -120,9 +126,9 @@ func (ah *AuthHandler) LoginHandler(c echo.Context) error {
 		if err != nil {
 			c.Set("ISERROR", true)
 			errs["pass"] = "Incorrect Password"
-			view := pages.Login(fromProtected, errs)
+			view := auth.Login(fromProtected, formdata, errs)
 
-			return renderView(c, pages.LoginIndex(
+			return renderView(c, auth.LoginIndex(
 				"Login",
 				"",
 				fromProtected,
@@ -153,10 +159,10 @@ func (ah *AuthHandler) LoginHandler(c echo.Context) error {
 
 	}
 	// isError = false
-	view := pages.Login(fromProtected, errs)
+	view := auth.Login(fromProtected, formdata, errs)
 	c.Set("ISERROR", false)
 
-	return renderView(c, pages.LoginIndex(
+	return renderView(c, auth.LoginIndex(
 		"Login",
 		"",
 		fromProtected,
@@ -168,6 +174,7 @@ func (ah *AuthHandler) LoginHandler(c echo.Context) error {
 func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 
 	errs := make(map[string]string)
+	formdata := make(map[string]string)
 	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
 
 	if fromProtected {
@@ -177,8 +184,11 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 	if c.Request().Method == "POST" {
 		// Validating data here
 		email := c.FormValue("email")
+		formdata["email"] = email
 		password := c.FormValue("password")
+		formdata["password"] = password
 		username := c.FormValue("username")
+		formdata["username"] = username
 
 		// check if email is valid
 		if !valid(email) {
@@ -210,11 +220,11 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 		}
 
 		if errs["username"] != "" || errs["email"] != "" || errs["password"] != "" {
-			view := pages.Register(fromProtected, errs)
+			view := auth.Register(fromProtected, formdata, errs)
 
 			c.Set("ISERROR", false)
 
-			return renderView(c, pages.RegisterIndex(
+			return renderView(c, auth.RegisterIndex(
 				"Register",
 				"",
 				fromProtected,
@@ -242,11 +252,11 @@ func (ah *AuthHandler) RegisterHandler(c echo.Context) error {
 		return errors.New("invalid type for key 'FROMPROTECTED'")
 	}
 
-	view := pages.Register(fromProtected, errs)
+	view := auth.Register(fromProtected, formdata, errs)
 
 	c.Set("ISERROR", false)
 
-	return renderView(c, pages.RegisterIndex(
+	return renderView(c, auth.RegisterIndex(
 		"Register",
 		"",
 		fromProtected,
@@ -299,13 +309,13 @@ func (ah *AuthHandler) ProfileHandler(c echo.Context) error {
 		return c.Redirect(200, "/login")
 	}
 
-	profile := services.Profile{}
+	p := services.Profile{}
 
-	view := pages.Profile(fromProtected, user, profile, errs)
+	view := profile.Profile(fromProtected, user, p, errs)
 
 	c.Set("ISERROR", false)
 
-	return renderView(c, pages.ProfileIndex(
+	return renderView(c, profile.ProfileIndex(
 		"Profile",
 		"",
 		fromProtected,
