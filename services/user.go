@@ -65,6 +65,18 @@ func (us *UserService) CheckEmail(email string) (User, error) {
 
 	return us.User, nil
 }
+
+func (us *UserService) UpdateUser(u User) error {
+	stmt := `UPDATE users SET email = ?, password = ?, username = ? WHERE id = ?`
+	_, err := us.UserStore.DB.Exec(stmt, u.Email, u.Password, u.Username)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (us *UserService) CheckUsername(usr string) (User, error) {
 	query := `SELECT id, email, password, username FROM users
 		WHERE username = ?`

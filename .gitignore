@@ -8,3 +8,4 @@ views/**/*.txt
 .env
 *.db
 bun.lockb
+public/avatars/*.img

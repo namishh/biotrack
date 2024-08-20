@@ -31,6 +31,7 @@ func main() {
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte(SECRET_KEY))))
 
 	e.Static("/static", "public")
+	e.Static("/av", "public/avatars")
 
 	store, err := database.NewDatabaseStore(DB_NAME)
 

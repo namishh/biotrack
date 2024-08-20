@@ -14,7 +14,6 @@ import (
 	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/pages"
 	"github.com/namishh/biotrack/views/pages/auth"
-	"github.com/namishh/biotrack/views/pages/profile"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -32,6 +31,7 @@ type AuthService interface {
 
 type ProfileService interface {
 	CreateDefaultProfile(u services.User) error
+	UpdateProfilePicture(u services.User, pfp string) error
 	GetProfileByUserId(id int) (services.Profile, error)
 }
 
@@ -285,41 +285,4 @@ func (ah *AuthHandler) LogoutHandler(c echo.Context) error {
 	c.Set("FROMPROTECTED", false)
 
 	return c.Redirect(http.StatusSeeOther, "/login")
-}
-
-func (ah *AuthHandler) ProfileHandler(c echo.Context) error {
-	errs := make(map[string]string)
-	formdata := make(map[string]string)
-	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
-
-	if !fromProtected {
-		return c.Redirect(http.StatusSeeOther, "/")
-	}
-
-	if c.Request().Method == "POST" {
-	}
-
-	if !ok {
-		return errors.New("invalid type for key 'FROMPROTECTED'")
-	}
-
-	p, err := ah.ProfileServices.GetProfileByUserId(c.Get(user_id_key).(int))
-
-	user, err := ah.UserServices.CheckUsername(c.Get(user_name_key).(string))
-
-	if err != nil {
-		return c.Redirect(200, "/login")
-	}
-
-	view := profile.Profile(fromProtected, user, p, errs, formdata)
-
-	c.Set("ISERROR", false)
-
-	return renderView(c, profile.ProfileIndex(
-		"Profile",
-		"",
-		fromProtected,
-		c.Get("ISERROR").(bool),
-		view,
-	))
 }
