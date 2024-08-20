@@ -3,11 +3,13 @@ package profile
 import (
 	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/layouts"
+	"strconv"
+	"strings"
 )
 
 templ Profile(fromProtected bool, user services.User, profile services.Profile, errors map[string]string, formdata map[string]string) {
-	<section class="text-white h-screen z-[100] xl:p-0 flex justify-center items-center">
-		<div class="z-[100] sm:w-3/4 w-full p-4 xl:w-3/5 flex justify-center flex-col xl:flex-row">
+	<section class="text-white min-h-screen z-[100] xl:p-0 flex justify-center items-center">
+		<div class="z-[100] sm:w-3/4 w-full p-4 xl:w-1/2 flex justify-center flex-col xl:flex-row">
 			<div class="w-full xl:w-1/3  flex-col p-2">
 				<div class="w-full  bg-gradient-to-br  from-purple-500/5 to-black rounded-xl">
 					<form enctype="multipart/form-data" action="/profile/updatepfp" class="flex  p-4 justify-between items-end" method="POST">
@@ -35,7 +37,55 @@ templ Profile(fromProtected bool, user services.User, profile services.Profile, 
 				</div>
 			</div>
 			<div class="w-full xl:w-2/3  h-[34rem] p-2">
-				<div class="w-full h-full bg-gradient-to-br  to-purple-500/5 from-black rounded-xl p-3">{ profile.ProfilePicture }</div>
+				<form action="/profile/updateprofile" method="POST" class="w-full h-full bg-gradient-to-br flex flex-col gap-8 to-purple-500/5 from-black rounded-xl p-6">
+					<div class="flex flex-col gap-4">
+						<div class="flex items-center justify-between">
+							<p class="text-xl text-purple-400">Weight</p>
+							<div class="flex gap-2">
+								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
+									<input type="radio" checked="checked" name="radio"/>
+									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
+										<p class=" z-[100]">Lbs</p>
+									</span>
+								</label>
+								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
+									<input type="radio" checked="checked" name="radio"/>
+									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
+										<p class=" z-[100]">Kgs</p>
+									</span>
+								</label>
+							</div>
+						</div>
+						<input autocomplete="false" value={ strconv.FormatFloat(profile.Weight, 'f', -1, 64) } name="weight" type="number" placeholder="420" class="focus:outline-none outline-none px-6 py-4 rounded-xl bg-zinc-900/60 w-full mt-3" id="weight"/>
+					</div>
+					<div class="flex flex-col gap-2">
+						<div class="flex items-center justify-between">
+							<p class="text-xl text-purple-400">Height</p>
+							<div class="flex gap-2">
+								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
+									<input type="radio" checked="checked" name="heightunit"/>
+									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
+										<p class=" z-[100]">inch</p>
+									</span>
+								</label>
+								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
+									<input type="radio" checked="checked" name="heightunit"/>
+									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
+										<p class=" z-[100]">cm</p>
+									</span>
+								</label>
+							</div>
+						</div>
+						<input autocomplete="false" value={ strconv.FormatFloat(profile.Height, 'f', -1, 64) } name="weight" type="number" placeholder="420" class="focus:outline-none outline-none px-6 py-4 rounded-xl bg-zinc-900/60 w-full mt-3" id="weight"/>
+					</div>
+					<div class="flex flex-col gap-2">
+						<div class="flex items-center justify-between">
+							<p class="text-xl text-purple-400">Date Of Birth</p>
+						</div>
+						<input autocomplete="false" value={ strings.Split(profile.Birthday, "T")[0] } name="weight" type="date" placeholder="420" class="focus:outline-none outline-none px-6 py-4 rounded-xl bg-zinc-900/60 w-full mt-3" id="weight"/>
+					</div>
+					<button class="text-black bg-purple-400 py-2 transition hover:bg-purple-500 rounded-md text-bold">Update Account</button>
+				</form>
 			</div>
 		</div>
 	</section>

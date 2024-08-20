@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* The radiocontainer */
+.radiocontainer {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    @apply text-sm;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.radiocontainer input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    left: 0;
+    @apply bg-transparent;
+}
+
+/* On mouse-over, add a grey background color */
+.radiocontainer:hover input ~ .checkmark {
+    @apply bg-zinc-700;
+}
+
+/* When the radio button is radioed, add a blue background */
+.radiocontainer input:checked ~ .checkmark {
+    @apply bg-purple-400 text-black;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
