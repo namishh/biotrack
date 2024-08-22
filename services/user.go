@@ -1,6 +1,8 @@
 package services
 
 import (
+	"log"
+
 	"github.com/namishh/biotrack/database"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -66,9 +68,33 @@ func (us *UserService) CheckEmail(email string) (User, error) {
 	return us.User, nil
 }
 
-func (us *UserService) UpdateUser(u User) error {
-	stmt := `UPDATE users SET email = ?, password = ?, username = ? WHERE id = ?`
-	_, err := us.UserStore.DB.Exec(stmt, u.Email, u.Password, u.Username)
+func (us *UserService) UpdateUser(email string, username string, id int) error {
+	stmt := `UPDATE users SET email = ?, username = ? WHERE id = ?`
+	_, err := us.UserStore.DB.Exec(stmt, email, username, id)
+	log.Println("done")
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+
+func (us *UserService) UpdateUsername(username string, id int) error {
+	stmt := `UPDATE users SET username = ? WHERE id = ?`
+	_, err := us.UserStore.DB.Exec(stmt, username, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (us *UserService) UpdateEmail(email string, id int) error {
+	stmt := `UPDATE users SET email = ? WHERE id = ?`
+	_, err := us.UserStore.DB.Exec(stmt, email, id)
 
 	if err != nil {
 		return err
@@ -91,6 +117,33 @@ func (us *UserService) CheckUsername(usr string) (User, error) {
 	us.User.Username = usr
 	err = stmt.QueryRow(
 		us.User.Username,
+	).Scan(
+		&us.User.ID,
+		&us.User.Email,
+		&us.User.Password,
+		&us.User.Username,
+	)
+	if err != nil {
+		return User{}, err
+	}
+
+	return us.User, nil
+}
+
+func (us *UserService) CheckID(usr int) (User, error) {
+	query := `SELECT id, email, password, username FROM users
+		WHERE id = ?`
+
+	stmt, err := us.UserStore.DB.Prepare(query)
+	if err != nil {
+		return User{}, err
+	}
+
+	defer stmt.Close()
+
+	us.User.ID = usr
+	err = stmt.QueryRow(
+		us.User.ID,
 	).Scan(
 		&us.User.ID,
 		&us.User.Email,

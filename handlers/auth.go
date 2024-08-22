@@ -26,7 +26,11 @@ const tzone_key string = "tzone_key"
 type AuthService interface {
 	CreateUser(u services.User) (services.User, error)
 	CheckEmail(email string) (services.User, error)
+	UpdateUser(email string, username string, id int) error
+	CheckID(usr int) (services.User, error)
+	UpdateEmail(email string, id int) error
 	CheckUsername(usr string) (services.User, error)
+	UpdateUsername(username string, id int) error
 }
 
 type ProfileService interface {
