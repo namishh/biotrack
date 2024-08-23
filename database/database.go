@@ -35,9 +35,9 @@ func GetConnection(dbName string) (*sql.DB, error) {
 func CreateMigrations(DBName string, DB *sql.DB) error {
 	stmt := `CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		email VARCHAR(255) NOT NULL,
-		password VARCHAR(255) NOT NULL,
-		username VARCHAR(255) NOT NULL,
+		email VARCHAR(20) NOT NULL,
+		password VARCHAR(20) NOT NULL,
+		username VARCHAR(20) NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		);
 	`
@@ -50,6 +50,8 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 	stmt = `CREATE TABLE IF NOT EXISTS profile (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		level INTEGER DEFAULT 0,
+		weight_unit VARCHAR(5) DEFAULT 'kg',
+		height_unit VARCHAR(5) DEFAULT 'cm',
 		profile_picture VARCHAR(255),
 		weight FLOAT DEFAULT 0,
 		height FLOAT DEFAULT 0,

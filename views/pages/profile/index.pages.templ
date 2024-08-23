@@ -61,13 +61,21 @@ templ Profile(fromProtected bool, user services.User, profile services.Profile, 
 							<p class="text-xl text-purple-400">Weight</p>
 							<div class="flex gap-2">
 								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
-									<input value="lbs" type="radio" id="lbs" name="weightunit"/>
+									if profile.WeightUnit == "lb" {
+										<input value="lb" type="radio" id="lbs" name="weightunit" checked/>
+									} else {
+										<input value="lb" type="radio" id="lbs" name="weightunit"/>
+									}
 									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
 										<p class=" z-[100]">Lbs</p>
 									</span>
 								</label>
 								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
-									<input value="kgs" type="radio" checked id="kgs" name="weightunit"/>
+									if profile.WeightUnit == "kg" {
+										<input value="kg" type="radio" checked id="kgs" name="weightunit"/>
+									} else {
+										<input value="kg" type="radio" id="kgs" name="weightunit"/>
+									}
 									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
 										<p class=" z-[100]">Kgs</p>
 									</span>
@@ -84,13 +92,21 @@ templ Profile(fromProtected bool, user services.User, profile services.Profile, 
 							<p class="text-xl text-purple-400">Height</p>
 							<div class="flex gap-2">
 								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
-									<input value="in" type="radio" id="in" name="heightunit"/>
+									if profile.HeightUnit == "in" {
+										<input value="in" checked type="radio" id="in" name="heightunit"/>
+									} else {
+										<input value="in" type="radio" id="in" name="heightunit"/>
+									}
 									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
 										<p class=" z-[100]">inch</p>
 									</span>
 								</label>
 								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
-									<input value="cm" type="radio" checked id="cm" name="heightunit"/>
+									if profile.HeightUnit == "cm" {
+										<input value="cm" checked type="radio" id="cm" name="heightunit"/>
+									} else {
+										<input value="cm" type="radio" id="cm" name="heightunit"/>
+									}
 									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
 										<p class=" z-[100]">cm</p>
 									</span>

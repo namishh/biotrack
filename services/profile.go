@@ -16,6 +16,8 @@ type Profile struct {
 	Birthday       string  `json:"birthday"`
 	Streak         int     `json:"streak"`
 	Bio            string  `json:"bio"`
+	HeightUnit     string  `json:"height_unit"`
+	WeightUnit     string  `json:"weight_unit"`
 	ProfileOf      int     `json:"profile_of"`
 }
 
@@ -40,10 +42,10 @@ func (ps *ProfileService) CreateDefaultProfile(u User) error {
 	return err
 }
 
-func (ps *ProfileService) UpdateProfile(userid int, height float64, weight float64, dob string) error {
+func (ps *ProfileService) UpdateProfile(userid int, height float64, weight float64, dob string, heightunit string, weightunit string) error {
 
-	stmt := `UPDATE profile SET weight = ?, height = ?, birthday = ? WHERE profile_of = ?`
-	_, err := ps.ProfileStore.DB.Exec(stmt, weight, height, dob, userid)
+	stmt := `UPDATE profile SET weight = ?, height = ?, birthday = ?, height_unit = ?, weight_unit = ? WHERE profile_of = ?`
+	_, err := ps.ProfileStore.DB.Exec(stmt, weight, height, dob, heightunit, weightunit, userid)
 
 	return err
 }
@@ -56,7 +58,7 @@ func (ps *ProfileService) UpdateProfilePicture(u User, pfp string) error {
 }
 
 func (ps *ProfileService) GetProfileByUserId(id int) (Profile, error) {
-	query := `SELECT id, level, profile_picture, weight, height, birthday, bio FROM profile WHERE profile_of = ?`
+	query := `SELECT id, level, profile_picture, weight, height, birthday, height_unit, weight_unit FROM profile WHERE profile_of = ?`
 
 	stmt, err := ps.ProfileStore.DB.Prepare(query)
 	if err != nil {
@@ -68,7 +70,7 @@ func (ps *ProfileService) GetProfileByUserId(id int) (Profile, error) {
 
 	ps.Profile.ProfileOf = id
 
-	err = stmt.QueryRow(ps.Profile.ProfileOf).Scan(&ps.Profile.ID, &ps.Profile.Level, &ps.Profile.ProfilePicture, &ps.Profile.Weight, &ps.Profile.Height, &ps.Profile.Birthday, &ps.Profile.Bio)
+	err = stmt.QueryRow(ps.Profile.ProfileOf).Scan(&ps.Profile.ID, &ps.Profile.Level, &ps.Profile.ProfilePicture, &ps.Profile.Weight, &ps.Profile.Height, &ps.Profile.Birthday, &ps.Profile.HeightUnit, &ps.Profile.WeightUnit)
 
 	if err != nil {
 		log.Print(err)

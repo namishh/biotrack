@@ -32,7 +32,7 @@ $ make dev
 - [x] User
   - [x] Edit Account
   - [x] Profile Customization
-  - [ ] Save units
+  - [x] Save units
 - [ ] Entry
   - [ ] Display Calendar Layout
   - [ ] Change Months

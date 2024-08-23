@@ -173,20 +173,15 @@ func (ah *AuthHandler) ProfileHandler(c echo.Context) error {
 				errs["dob"] = "Invalid Date"
 			}
 
-			if weightunit == "lbs" {
-				weight = RoundFloat(weight*0.453592, 2)
-			}
-
-			if heightunit == "in" {
-				height = RoundFloat(height*2.54, 2)
-			}
-
 			p.Weight = weight
 			p.Height = height
 			p.Birthday = age
 
+			p.HeightUnit = heightunit
+			p.WeightUnit = weightunit
+
 			if len(errs) == 0 {
-				ah.ProfileServices.UpdateProfile(c.Get(user_id_key).(int), height, weight, age)
+				ah.ProfileServices.UpdateProfile(c.Get(user_id_key).(int), height, weight, age, heightunit, weightunit)
 			}
 		}
 	}
