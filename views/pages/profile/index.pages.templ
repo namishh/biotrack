@@ -25,7 +25,10 @@ templ Profile(fromProtected bool, user services.User, profile services.Profile, 
 						</label>
 						<input name="profile_picture" id="profile_picture" class="hidden" type="file" accept="image/*"/>
 						<input name="t" id="type" value="pfpupdate" class="hidden" type="text"/>
-						<button type="submit" class="bg-purple-400 transition hover:bg-purple-500 px-3 text-sm py-[4px] rounded-md text-black">Update</button>
+						<div class="flex gap-2">
+							<button type="submit" class="bg-purple-400 transition hover:bg-purple-500 px-3 text-sm py-[4px] rounded-md text-black">Update</button>
+							<a href="/logout" class="bg-zinc-900 hover:text-black text-red-400 transition hover:bg-red-500 px-3 text-sm py-[4px] rounded-md">Logout</a>
+						</div>
 					</form>
 					if errors["avatar"] != "" {
 						<p class="text-red-500 m-2 text-sm">{ errors["avatar"] }</p>
@@ -51,7 +54,7 @@ templ Profile(fromProtected bool, user services.User, profile services.Profile, 
 					</form>
 				</div>
 			</div>
-			<div class="w-full xl:w-2/3  h-[35rem] p-2">
+			<div class="w-full xl:w-2/3  h-[33rem] p-2">
 				<form action="" method="POST" class="w-full h-full bg-gradient-to-br flex flex-col gap-8 to-purple-500/5 from-black rounded-xl p-6">
 					<div class="flex flex-col gap-4">
 						<div class="flex items-center justify-between">

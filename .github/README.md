@@ -13,7 +13,7 @@ $ make css
 $ make dev
 ```
 
-### Screenshots 
+### Screenshots
 
 ![s1](https://i.imgur.com/DUTp4qs.png)
 ![s2](https://i.imgur.com/k5vYIF4.png)
@@ -29,7 +29,17 @@ $ make dev
   - [x] Login
   - [x] Logout
   - [x] Protected Routes
-- [ ] User
-  - [ ] Profile Customization
+- [x] User
+  - [x] Edit Account
+  - [x] Profile Customization
+  - [ ] Save units
+- [ ] Entry
+  - [ ] Display Calendar Layout
+  - [ ] Change Months
+  - [ ] Entries
+    - [ ] Add Entry
+    - [ ] Edit Entry
+    - [ ] Delete Entry
+    - [ ] View Entry
 
 ... more to come

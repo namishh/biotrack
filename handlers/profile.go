@@ -36,34 +36,28 @@ func String(length int) string {
 }
 
 func ValidateDate(dateString string) bool {
-	// Check if the string matches the pattern yyyy-mm-dd
 	pattern := `^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$`
 	matched, err := regexp.MatchString(pattern, dateString)
 	if err != nil || !matched {
 		return false
 	}
 
-	// Parse the date string
 	birthDate, err := time.Parse("2006-01-02", dateString)
 	if err != nil {
 		return false
 	}
 
-	// Check if the date is not in the future
 	if birthDate.After(time.Now()) {
 		return false
 	}
 
-	// Calculate age
 	today := time.Now()
 	age := today.Year() - birthDate.Year()
 
-	// Adjust age if birthday hasn't occurred this year
 	if today.Month() < birthDate.Month() || (today.Month() == birthDate.Month() && today.Day() < birthDate.Day()) {
 		age--
 	}
 
-	// Check if age is at least 13
 	return age >= 13
 }
 

@@ -5,12 +5,13 @@ templ Navbar(username string, fromProtected bool) {
 		<div class="navbar w-full lg:w-2/3 xl:w-1/2 rounded-xl border-2 border-zinc-800 p-3 bg-zinc-800/50 backdrop-blur-xl flex justify-between">
 			<a href="/" class="justify-center items-center flex gap-4">
 				<img src="/static/favicon.png" class="h-8"/>
-				<span class="text-purple-400 text-xl font-bold">BIO <span class="text-white font-normal">Track</span></span>
+				<span class="text-purple-400 hidden md:block text-xl font-bold">BIO <span class="text-white font-normal">Track</span></span>
 			</a>
 			// LINKS
 			<div class="flex items-center gap-3">
 				if fromProtected {
-					<a href="/stats" class=" px-4 text-white">Stats</a>
+					<a href="/chat" class=" px-4 text-white">Chat</a>
+					<a href="/journal" class=" px-4 text-white">Journal</a>
 					<a href="/profile" class=" px-4 py-1 bg-purple-400 rounded-lg text-black font-bold">Profile</a>
 				} else {
 					<a href="/register" class=" px-4 text-white ">Register</a>
