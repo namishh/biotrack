@@ -40,9 +40,10 @@ func (ps *ProfileService) CreateDefaultProfile(u User) error {
 	return err
 }
 
-func (ps *ProfileService) UpdateProfile(u User) error {
-	stmt := `UPDATE profile SET level = ?, weight = ?, height = ?, birthday = ?, bio = ? WHERE profile_of = ?`
-	_, err := ps.ProfileStore.DB.Exec(stmt, ps.Profile.Level, ps.Profile.Weight, ps.Profile.Height, ps.Profile.Birthday, ps.Profile.Bio, u.ID)
+func (ps *ProfileService) UpdateProfile(userid int, height float64, weight float64, dob string) error {
+
+	stmt := `UPDATE profile SET weight = ?, height = ?, birthday = ? WHERE profile_of = ?`
+	_, err := ps.ProfileStore.DB.Exec(stmt, weight, height, dob, userid)
 
 	return err
 }

@@ -36,6 +36,7 @@ type AuthService interface {
 type ProfileService interface {
 	CreateDefaultProfile(u services.User) error
 	UpdateProfilePicture(u services.User, pfp string) error
+	UpdateProfile(userid int, height float64, weight float64, dob string) error
 	GetProfileByUserId(id int) (services.Profile, error)
 }
 

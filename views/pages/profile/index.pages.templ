@@ -58,13 +58,13 @@ templ Profile(fromProtected bool, user services.User, profile services.Profile, 
 							<p class="text-xl text-purple-400">Weight</p>
 							<div class="flex gap-2">
 								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
-									<input type="radio" id="lbs" name="weightunit"/>
+									<input value="lbs" type="radio" id="lbs" name="weightunit"/>
 									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
 										<p class=" z-[100]">Lbs</p>
 									</span>
 								</label>
 								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
-									<input type="radio" checked id="kgs" name="weightunit"/>
+									<input value="kgs" type="radio" checked id="kgs" name="weightunit"/>
 									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
 										<p class=" z-[100]">Kgs</p>
 									</span>
@@ -72,19 +72,22 @@ templ Profile(fromProtected bool, user services.User, profile services.Profile, 
 							</div>
 						</div>
 						<input step="0.01" autocomplete="false" value={ strconv.FormatFloat(profile.Weight, 'f', -1, 64) } name="weight" type="number" placeholder="420" class="focus:outline-none outline-none px-6 py-4 rounded-xl bg-zinc-900/60 w-full mt-3" id="weight"/>
+						if errors["weight"] != "" {
+							<p class="text-red-500 m-2 text-sm">{ errors["weight"] }</p>
+						}
 					</div>
 					<div class="flex flex-col gap-2">
 						<div class="flex items-center justify-between">
 							<p class="text-xl text-purple-400">Height</p>
 							<div class="flex gap-2">
 								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
-									<input type="radio" id="in" name="heightunit"/>
+									<input value="in" type="radio" id="in" name="heightunit"/>
 									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
 										<p class=" z-[100]">inch</p>
 									</span>
 								</label>
 								<label class="radiocontainer h-8 w-16 px-4 py-[4px] rounded-xl relative">
-									<input type="radio" checked id="cm" name="heightunit"/>
+									<input value="cm" type="radio" checked id="cm" name="heightunit"/>
 									<span class="checkmark rounded-xl transition absolute w-full h-full flex justify-center items-center">
 										<p class=" z-[100]">cm</p>
 									</span>
@@ -92,12 +95,18 @@ templ Profile(fromProtected bool, user services.User, profile services.Profile, 
 							</div>
 						</div>
 						<input step="0.01" autocomplete="false" value={ strconv.FormatFloat(profile.Height, 'f', -1, 64) } name="height" type="number" placeholder="420" class="focus:outline-none outline-none px-6 py-4 rounded-xl bg-zinc-900/60 w-full mt-3" id="height"/>
+						if errors["height"] != "" {
+							<p class="text-red-500 m-2 text-sm">{ errors["height"] }</p>
+						}
 					</div>
 					<div class="flex flex-col gap-2">
 						<div class="flex items-center justify-between">
 							<p class="text-xl text-purple-400">Date Of Birth</p>
 						</div>
 						<input step="0.01" autocomplete="false" value={ strings.Split(profile.Birthday, "T")[0] } name="dob" type="date" placeholder="420" class="focus:outline-none outline-none px-6 py-4 rounded-xl bg-zinc-900/60 w-full mt-3" id="dob"/>
+						if errors["dob"] != "" {
+							<p class="text-red-500 m-2 text-sm">{ errors["dob"] }</p>
+						}
 					</div>
 					<input name="t" id="type" value="profileupdate" class="hidden" type="text"/>
 					<button class="text-black bg-purple-400 py-2 transition hover:bg-purple-500 rounded-md text-bold">Update Profile</button>

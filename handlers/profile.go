@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"math/rand"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -32,6 +34,44 @@ func StringWithCharset(length int, charset string) string {
 func String(length int) string {
 	return StringWithCharset(length, charset)
 }
+
+func ValidateDate(dateString string) bool {
+	// Check if the string matches the pattern yyyy-mm-dd
+	pattern := `^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$`
+	matched, err := regexp.MatchString(pattern, dateString)
+	if err != nil || !matched {
+		return false
+	}
+
+	// Parse the date string
+	birthDate, err := time.Parse("2006-01-02", dateString)
+	if err != nil {
+		return false
+	}
+
+	// Check if the date is not in the future
+	if birthDate.After(time.Now()) {
+		return false
+	}
+
+	// Calculate age
+	today := time.Now()
+	age := today.Year() - birthDate.Year()
+
+	// Adjust age if birthday hasn't occurred this year
+	if today.Month() < birthDate.Month() || (today.Month() == birthDate.Month() && today.Day() < birthDate.Day()) {
+		age--
+	}
+
+	// Check if age is at least 13
+	return age >= 13
+}
+
+func RoundFloat(val float64, precision uint) float64 {
+	ratio := math.Pow(10, float64(precision))
+	return math.Round(val*ratio) / ratio
+}
+
 func (ah *AuthHandler) ProfileHandler(c echo.Context) error {
 	errs := make(map[string]string)
 	formdata := make(map[string]string)
@@ -135,7 +175,25 @@ func (ah *AuthHandler) ProfileHandler(c echo.Context) error {
 
 			age := c.FormValue("dob")
 
-			log.Print(weight, height, age, heightunit, weightunit)
+			if !ValidateDate(age) {
+				errs["dob"] = "Invalid Date"
+			}
+
+			if weightunit == "lbs" {
+				weight = RoundFloat(weight*0.453592, 2)
+			}
+
+			if heightunit == "in" {
+				height = RoundFloat(height*2.54, 2)
+			}
+
+			p.Weight = weight
+			p.Height = height
+			p.Birthday = age
+
+			if len(errs) == 0 {
+				ah.ProfileServices.UpdateProfile(c.Get(user_id_key).(int), height, weight, age)
+			}
 		}
 	}
 
