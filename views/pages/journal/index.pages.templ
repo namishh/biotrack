@@ -1,0 +1,19 @@
+package journal
+
+import "github.com/namishh/biotrack/views/layouts"
+
+templ Journal(fromProtected bool) {
+	<section class="min-h-screen relative mx-auto z-[10000] w-screen flex  gap-8 text-center items-center justify-center text-white">hi</section>
+}
+
+templ JournalIndex(
+	title,
+	username string,
+	fromProtected bool,
+	isError bool,
+	cmp templ.Component,
+) {
+	@layouts.Base(title, username, fromProtected, isError) {
+		@cmp
+	}
+}

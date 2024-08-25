@@ -37,15 +37,18 @@ func main() {
 
 	us := services.NewUserService(services.User{}, store)
 	ps := services.NewProfileService(services.Profile{}, store)
+	es := services.NewEntryService(services.Entry{}, store)
 	as := services.NewAvatarService(services.Avatar{}, store)
 
-	ah := handlers.NewAuthHandler(us, ps, as)
+	ah := handlers.NewAuthHandler(us, ps, as, es)
+
+	jh := handlers.NewJournalHandler(ps, es)
 
 	if err != nil {
 		e.Logger.Fatalf("failed to create store: %s", err)
 	}
 
-	handlers.SetupRoutes(e, ah)
+	handlers.SetupRoutes(e, ah, jh)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":6969"))

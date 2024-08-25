@@ -33,25 +33,19 @@ type AuthService interface {
 	UpdateUsername(username string, id int) error
 }
 
-type ProfileService interface {
-	CreateDefaultProfile(u services.User) error
-	UpdateProfilePicture(u services.User, pfp string) error
-	UpdateProfile(userid int, height float64, weight float64, dob string, heightunit string, weightunit string) error
-	GetProfileByUserId(id int) (services.Profile, error)
-}
-
-type AvatarService interface {
-	GenerateGradient(username string) map[string]string
-}
-
 type AuthHandler struct {
 	UserServices    AuthService
 	ProfileServices ProfileService
 	AvatarServices  AvatarService
+	EntryServices   EntryService
 }
 
-func NewAuthHandler(us AuthService, ps ProfileService, as AvatarService) *AuthHandler {
-	return &AuthHandler{UserServices: us, ProfileServices: ps, AvatarServices: as}
+func NewAuthHandler(us AuthService, ps ProfileService, as AvatarService, es EntryService) *AuthHandler {
+	return &AuthHandler{UserServices: us, ProfileServices: ps, AvatarServices: as, EntryServices: es}
+}
+
+func NewJournalHandler(ps ProfileService, es EntryService) *JournalHandler {
+	return &JournalHandler{ProfileServices: ps, EntryServices: es}
 }
 
 func renderView(c echo.Context, cmp templ.Component) error {

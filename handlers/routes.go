@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func SetupRoutes(e *echo.Echo, ah *AuthHandler) {
+func SetupRoutes(e *echo.Echo, ah *AuthHandler, jh *JournalHandler) {
 	e.GET("/", ah.flagsMiddleware(ah.HomeHandler))
 
 	// AUTH ROUTES
@@ -19,4 +19,7 @@ func SetupRoutes(e *echo.Echo, ah *AuthHandler) {
 
 	e.GET("/profile", ah.authMiddleware(ah.ProfileHandler))
 	e.POST("/profile", ah.authMiddleware(ah.ProfileHandler))
+
+	journalGroup := e.Group("/journal", ah.authMiddleware)
+	journalGroup.GET("", jh.HomeHandler)
 }

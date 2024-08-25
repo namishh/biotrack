@@ -8,6 +8,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type AvatarService interface {
+	GenerateGradient(username string) map[string]string
+}
+
 const size = 192
 
 func createSVG(gradient map[string]string) string {

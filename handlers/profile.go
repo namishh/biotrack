@@ -14,8 +14,16 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/pages/profile"
 )
+
+type ProfileService interface {
+	CreateDefaultProfile(u services.User) error
+	UpdateProfilePicture(u services.User, pfp string) error
+	UpdateProfile(userid int, height float64, weight float64, dob string, heightunit string, weightunit string) error
+	GetProfileByUserId(id int) (services.Profile, error)
+}
 
 const charset = "abcdefghijklmnopqrstuvwxyz" +
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
