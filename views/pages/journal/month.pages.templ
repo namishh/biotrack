@@ -1,11 +1,36 @@
 package journal
 
-import "github.com/namishh/biotrack/views/layouts"
+import (
+	"fmt"
+	"github.com/namishh/biotrack/views/layouts"
+	"strconv"
+)
 
-templ Month(fromProtected bool, month string, year int, me []map[string]string, extras int, e2 int) {
+templ Month(fromProtected bool, month string, year int, me []map[string]string, extras int, e2 int, nm, ny, pm, py, mi int) {
+	<div class="z-[100000] hidden NAVBAR w-full flex justify-center items-center p-4">
+		<div class="flex p-4 rounded-md w-full xl:w-1/2 items-center bg-zinc-900 justify-between">
+			<div class="flex items-center">
+				<a href={ templ.URL(fmt.Sprintf("/journal/%d/%d", py, pm)) } class="text-white text-xl">
+					<img class="h-4" src="/static/caret-left.svg"/>
+				</a>
+				<h1 class="text-xl  text-white mx-4">{ month }, <span class="text-purple-400 font-bold">{ strconv.Itoa(year) } </span></h1>
+				<a href={ templ.URL(fmt.Sprintf("/journal/%d/%d", ny, nm)) } class="text-white text-xl">
+					<img class="h-4" src="/static/caret-right.svg"/>
+				</a>
+			</div>
+			<div class="flex gap-6">
+				<a href="/">
+					<img class="h-6" src="/static/house.svg"/>
+				</a>
+				<a href="/journal">
+					<img class="h-6" src="/static/notebook.svg"/>
+				</a>
+			</div>
+		</div>
+	</div>
 	<section class="h-screen relative mx-auto z-[10000] w-screen flex  gap-8 text-center items-center justify-center text-white">
 		<div class="grid grid-cols-7 w-full h-full divide-x-2 divide-y-2 divide-zinc-900">
-			<div class="text-cente border-r-transparent border-b-transparent border-l-transparent border-t-zinc-900 border-2  text-purple-400 text-xl flex justify-center items-center">
+			<div class="text-center border-r-transparent border-b-transparent border-l-transparent border-t-zinc-900 border-2  text-purple-400 text-xl flex justify-center items-center">
 				<p>Mon</p>
 			</div>
 			<div class="text-center text-purple-400 text-xl flex justify-center items-center">
@@ -30,15 +55,41 @@ templ Month(fromProtected bool, month string, year int, me []map[string]string, 
 				<div class="text-center text-gray-400  p-4 text-xl"></div>
 			}
 			for _,j := range me {
-				<div class="text-center text-xl flex justify-center items-center">
+				<a href={ templ.URL(fmt.Sprintf("/journal/%d/%d/%s", year, mi, j["date"])) } class="text-center transition hover:bg-purple-400/10 text-xl flex justify-center items-center">
 					<div class="text-center text-gray-100 text-2xl">{ j["date"] }</div>
-				</div>
+				</a>
 			}
 			for i := 0; i < e2; i++ {
 				<div class="text-center text-gray-400  p-4 text-xl"></div>
 			}
 		</div>
 	</section>
+	<script>
+    	(function() {
+           	const element = document.querySelector('.NAVBAR');
+
+            // Variable to store the timeout
+            let timeout;
+
+            // Function to show the element
+            function showElement() {
+                element.classList.remove('hidden');
+                element.classList.add('fixed');
+
+                // Clear any existing timeout
+                clearTimeout(timeout);
+
+                // Set a new timeout to hide the element after 3 seconds
+                timeout = setTimeout(() => {
+                    element.classList.remove('fixed');
+                    element.classList.add('hidden');
+                }, 1000);
+            }
+
+            // Add mousemove event listener to the document
+            document.addEventListener('mousemove', showElement);
+        })();
+	</script>
 }
 
 templ MonthIndex(
@@ -48,7 +99,7 @@ templ MonthIndex(
 	isError bool,
 	cmp templ.Component,
 ) {
-	@layouts.Base(title, username, fromProtected, isError) {
+	@layouts.MonthBase(title, username, fromProtected, isError) {
 		@cmp
 	}
 }

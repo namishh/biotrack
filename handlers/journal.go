@@ -87,18 +87,39 @@ func (jh *JournalHandler) MonthHandler(c echo.Context) error {
 		m[i]["date"] = strconv.Itoa(i + 1)
 	}
 
-	log.Print(m, monthname)
+	nm := month
+	ny := year
+
+	if month == 12 {
+		ny += 1
+		nm = 1
+	} else {
+		nm += 1
+	}
+
+	pm := month
+	py := year
+
+	if month == 1 {
+		py -= 1
+		pm = 12
+	} else {
+		pm -= 1
+	}
 
 	extras := getDayOfWeek(year, month, 1)
-
+	log.Println(getDayOfWeek(year, month, daysInMonth(year, month)))
 	e2 := 7 - getDayOfWeek(year, month, daysInMonth(year, month))
+	if getDayOfWeek(year, month, daysInMonth(year, month)) == 0 {
+		e2 = 0
+	}
 
 	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
 	if !ok {
 		return errors.New("invalid type for key 'FROMPROTECTED'")
 	}
 	// isError = false
-	jourView := journal.Month(fromProtected, monthname, year, m, extras, e2)
+	jourView := journal.Month(fromProtected, monthname, year, m, extras, e2, nm, ny, pm, py, month)
 	c.Set("ISERROR", false)
 
 	return renderView(c, journal.MonthIndex(
