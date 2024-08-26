@@ -1,0 +1,54 @@
+package journal
+
+import "github.com/namishh/biotrack/views/layouts"
+
+templ Month(fromProtected bool, month string, year int, me []map[string]string, extras int, e2 int) {
+	<section class="h-screen relative mx-auto z-[10000] w-screen flex  gap-8 text-center items-center justify-center text-white">
+		<div class="grid grid-cols-7 w-full h-full divide-x-2 divide-y-2 divide-zinc-900">
+			<div class="text-cente border-r-transparent border-b-transparent border-l-transparent border-t-zinc-900 border-2  text-purple-400 text-xl flex justify-center items-center">
+				<p>Mon</p>
+			</div>
+			<div class="text-center text-purple-400 text-xl flex justify-center items-center">
+				<p>Tue</p>
+			</div>
+			<div class="text-center text-purple-400 text-xl flex justify-center items-center">
+				<p>Wed</p>
+			</div>
+			<div class="text-center text-purple-400 text-xl flex justify-center items-center">
+				<p>Thu</p>
+			</div>
+			<div class="text-center text-purple-400 text-xl flex justify-center items-center">
+				<p>Fri</p>
+			</div>
+			<div class="text-center text-red-400 text-xl flex justify-center items-center">
+				<p>Sat</p>
+			</div>
+			<div class="text-center text-red-400 text-xl flex justify-center items-center">
+				<p>Sun</p>
+			</div>
+			for i := 1; i < extras; i++ {
+				<div class="text-center text-gray-400  p-4 text-xl"></div>
+			}
+			for _,j := range me {
+				<div class="text-center text-xl flex justify-center items-center">
+					<div class="text-center text-gray-100 text-2xl">{ j["date"] }</div>
+				</div>
+			}
+			for i := 0; i < e2; i++ {
+				<div class="text-center text-gray-400  p-4 text-xl"></div>
+			}
+		</div>
+	</section>
+}
+
+templ MonthIndex(
+	title,
+	username string,
+	fromProtected bool,
+	isError bool,
+	cmp templ.Component,
+) {
+	@layouts.Base(title, username, fromProtected, isError) {
+		@cmp
+	}
+}
