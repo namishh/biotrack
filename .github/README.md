@@ -17,6 +17,7 @@ $ make dev
 
 ![s1](https://i.imgur.com/DUTp4qs.png)
 ![s2](https://i.imgur.com/k5vYIF4.png)
+![s3](https://i.imgur.com/f0qpaPj.png)
 
 ### Todo
 - [x] Setup
@@ -34,8 +35,8 @@ $ make dev
   - [x] Profile Customization
   - [x] Save units
 - [ ] Entry
-  - [ ] Display Calendar Layout
-  - [ ] Change Months
+  - [s] Display Calendar Layout
+  - [x] Change Months
   - [ ] Entries
     - [ ] Add Entry
     - [ ] Edit Entry
