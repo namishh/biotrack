@@ -35,7 +35,7 @@ $ make dev
   - [x] Profile Customization
   - [x] Save units
 - [ ] Entry
-  - [s] Display Calendar Layout
+  - [x] Display Calendar Layout
   - [x] Change Months
   - [ ] Entries
     - [ ] Add Entry
