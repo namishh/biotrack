@@ -1,0 +1,40 @@
+package journal
+
+import (
+	"github.com/namishh/biotrack/services"
+	"github.com/namishh/biotrack/views/layouts"
+)
+
+templ Day(fromProtected bool, entries []services.Entry) {
+	<section class="min-h-screen p-8 w-screen relative  z-[10000] flex flex-col  gap-8  items-center text-white">
+		<form class="w-full mt-24 md:mt-32 md:w-2/3 lg:w-1/2 xl:w-2/5 bg-neutral-900/20 border-[1px] border-neutral-800 rounded-xl p-4">
+			<div class="flex justify-between items-center cursor-pointer ADD">
+				<p>Add new</p>
+				<img src="/static/add.svg"/>
+			</div>
+			<div class="addform hidden mt-3">
+				hi
+			</div>
+		</form>
+	</section>
+	<script>
+        const ADD = document.querySelector('.ADD');
+        const addform = document.querySelector('.addform');
+        ADD.addEventListener('click', () => {
+        addform.classList.toggle('hidden');
+        addform.classList.toggle('block');
+        });
+    </script>
+}
+
+templ DayIndex(
+	title,
+	username string,
+	fromProtected bool,
+	isError bool,
+	cmp templ.Component,
+) {
+	@layouts.Base(title, username, fromProtected, isError) {
+		@cmp
+	}
+}

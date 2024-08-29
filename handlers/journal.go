@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"errors"
-	"log"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/pages/journal"
 )
 
@@ -30,6 +31,34 @@ func (jh *JournalHandler) HomeHandler(c echo.Context) error {
 
 	return renderView(c, journal.JournalIndex(
 		"Journal",
+		"",
+		fromProtected,
+		c.Get("ISERROR").(bool),
+		jourView,
+	))
+}
+
+func (jh *JournalHandler) DayHandler(c echo.Context) error {
+
+	month, err := strconv.Atoi(c.Param("month"))
+	year, err := strconv.Atoi(c.Param("year"))
+	date, err := strconv.Atoi(c.Param("date"))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid date"})
+	}
+
+	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
+	if !ok {
+		return errors.New("invalid type for key 'FROMPROTECTED'")
+	}
+
+	entries := make([]services.Entry, 10)
+	jourView := journal.Day(fromProtected, entries)
+	c.Set("ISERROR", false)
+
+	return renderView(c, journal.DayIndex(
+		fmt.Sprintf("%d/%d/%d", year, month, date),
 		"",
 		fromProtected,
 		c.Get("ISERROR").(bool),
@@ -108,7 +137,6 @@ func (jh *JournalHandler) MonthHandler(c echo.Context) error {
 	}
 
 	extras := getDayOfWeek(year, month, 1)
-	log.Println(getDayOfWeek(year, month, daysInMonth(year, month)))
 	e2 := 7 - getDayOfWeek(year, month, daysInMonth(year, month))
 	if getDayOfWeek(year, month, daysInMonth(year, month)) == 0 {
 		e2 = 0
