@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,11 +14,21 @@ import (
 )
 
 type EntryService interface {
+	GetAllEntriesByUser(id int) []services.Entry
 }
 
 type JournalHandler struct {
 	ProfileServices ProfileService
 	EntryServices   EntryService
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
 
 func (jh *JournalHandler) HomeHandler(c echo.Context) error {
@@ -44,6 +55,16 @@ func (jh *JournalHandler) DayHandler(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("year"))
 	date, err := strconv.Atoi(c.Param("date"))
 
+	formdata := make(map[string]string)
+
+	monthname := getMonthName(month)
+
+	isok, err := isNotFuture(year, month)
+
+	if monthname == "0" || !isok {
+		return c.Redirect(http.StatusFound, "/")
+	}
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid date"})
 	}
@@ -53,8 +74,28 @@ func (jh *JournalHandler) DayHandler(c echo.Context) error {
 		return errors.New("invalid type for key 'FROMPROTECTED'")
 	}
 
-	entries := make([]services.Entry, 10)
-	jourView := journal.Day(fromProtected, entries)
+	entries := jh.EntryServices.GetAllEntriesByUser(c.Get(user_id_key).(int))
+
+	if c.Request().Method == "POST" {
+		value, err := strconv.Atoi(c.FormValue("value"))
+		typ := c.FormValue("type")
+		stat := c.FormValue("desc")
+
+		if err != nil {
+			formdata["error"] = "Invalid values detected"
+		}
+
+		var allowed []string
+		allowed = append(allowed, "hr", "bp", "sp", "height", "weight", "sugar")
+
+		if !stringInSlice(typ, allowed) {
+			formdata["error"] = "Invalid values detected"
+		}
+
+		log.Println(typ, value, stat, formdata)
+	}
+
+	jourView := journal.Day(fromProtected, entries, formdata)
 	c.Set("ISERROR", false)
 
 	return renderView(c, journal.DayIndex(
