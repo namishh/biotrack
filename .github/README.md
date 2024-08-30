@@ -37,10 +37,10 @@ $ make dev
 - [ ] Entry
   - [x] Display Calendar Layout
   - [x] Change Months
-  - [ ] Entries
-    - [ ] Add Entry
-    - [ ] Edit Entry
-    - [ ] Delete Entry
-    - [ ] View Entry
+  - [x] Entries
+    - [x] Add Entry
+    - [x] Delete Entry
+    - [x] View Entry
+  - [ ] Show Entries on Calendar
 
 ... more to come

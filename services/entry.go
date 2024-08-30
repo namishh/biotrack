@@ -43,56 +43,118 @@ func (es *EntryServices) CreateEntry(user int, typ string, status string, value 
 
 func (es *EntryServices) GetAllEntriesByUser(id int) ([]Entry, error) {
 	stmt := `SELECT id, type, status, created_by, value, created_at, month, day, year FROM entry WHERE created_by = ?`
-    rows, err := es.EntryStore.DB.Query(stmt, id)
-    if err != nil {
-        log.Printf("Query failed: %v", err)
-        return nil, err
-    }
-    defer rows.Close()
+	rows, err := es.EntryStore.DB.Query(stmt, id)
+	if err != nil {
+		log.Printf("Query failed: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
 
-    var entries []Entry
-    for rows.Next() {
-        var e Entry
-        err := rows.Scan(&e.ID, &e.Type, &e.Status, &e.CreatedBy, &e.Value, &e.CreatedAt, &e.Month, &e.Day, &e.Year)
-        if err != nil {
-            log.Printf("Scan failed: %v", err)
-            return nil, err
-        }
-        entries = append(entries, e)
-    }
+	var entries []Entry
+	for rows.Next() {
+		var e Entry
+		err := rows.Scan(&e.ID, &e.Type, &e.Status, &e.CreatedBy, &e.Value, &e.CreatedAt, &e.Month, &e.Day, &e.Year)
+		if err != nil {
+			log.Printf("Scan failed: %v", err)
+			return nil, err
+		}
+		entries = append(entries, e)
+	}
 
-    if err = rows.Err(); err != nil {
-        log.Printf("Row iteration failed: %v", err)
-        return nil, err
-    }
+	if err = rows.Err(); err != nil {
+		log.Printf("Row iteration failed: %v", err)
+		return nil, err
+	}
 
-    return entries, nil
+	return entries, nil
 }
 
 func (es *EntryServices) GetAllEntriesByDate(id int, month, day, year int) ([]Entry, error) {
-    stmt := `SELECT id, type, status, created_by, value, created_at, month, day, year FROM entry WHERE created_by = ? AND month = ? AND day = ? AND year = ?`
-    rows, err := es.EntryStore.DB.Query(stmt, id, month, day, year)
-    if err != nil {
-        log.Printf("Query failed: %v", err)
-        return nil, err
-    }
-    defer rows.Close()
+	stmt := `SELECT id, type, status, created_by, value, created_at, month, day, year FROM entry WHERE created_by = ? AND month = ? AND day = ? AND year = ?`
+	rows, err := es.EntryStore.DB.Query(stmt, id, month, day, year)
+	if err != nil {
+		log.Printf("Query failed: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
 
-    var entries []Entry
-    for rows.Next() {
-        var e Entry
-        err := rows.Scan(&e.ID, &e.Type, &e.Status, &e.CreatedBy, &e.Value, &e.CreatedAt, &e.Month, &e.Day, &e.Year)
-        if err != nil {
-            log.Printf("Scan failed: %v", err)
-            return nil, err
-        }
-        entries = append(entries, e)
-    }
+	var entries []Entry
+	for rows.Next() {
+		var e Entry
+		err := rows.Scan(&e.ID, &e.Type, &e.Status, &e.CreatedBy, &e.Value, &e.CreatedAt, &e.Month, &e.Day, &e.Year)
+		if err != nil {
+			log.Printf("Scan failed: %v", err)
+			return nil, err
+		}
+		entries = append(entries, e)
+	}
 
-    if err = rows.Err(); err != nil {
-        log.Printf("Row iteration failed: %v", err)
-        return nil, err
-    }
+	if err = rows.Err(); err != nil {
+		log.Printf("Row iteration failed: %v", err)
+		return nil, err
+	}
 
-    return entries, nil
+	return entries, nil
+}
+
+func (es *EntryServices) GetAllEntriesByMonth(id int, month, year int) ([]Entry, error) {
+	stmt := `SELECT id, type, status, created_by, value, created_at, month, day, year FROM entry WHERE created_by = ? AND month = ? AND year = ?`
+	rows, err := es.EntryStore.DB.Query(stmt, id, month, year)
+	if err != nil {
+		log.Printf("Query failed: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var entries []Entry
+	for rows.Next() {
+		var e Entry
+		err := rows.Scan(&e.ID, &e.Type, &e.Status, &e.CreatedBy, &e.Value, &e.CreatedAt, &e.Month, &e.Day, &e.Year)
+		if err != nil {
+			log.Printf("Scan failed: %v", err)
+			return nil, err
+		}
+		entries = append(entries, e)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Printf("Row iteration failed: %v", err)
+		return nil, err
+	}
+
+	return entries, nil
+}
+
+func (es *EntryServices) DeleteEntry(id int) error {
+	query := "DELETE FROM entry WHERE id = ?"
+
+	// Execute the delete statement
+	_, err := es.EntryStore.DB.Exec(query, id)
+	if err != nil {
+		log.Printf("Error deleting hint with ID %d: %v", id, err)
+		return err
+	}
+	return nil
+}
+
+func (es *EntryServices) GetEntryByID(id int) (Entry, error) {
+	query := `SELECT id, type, status, created_by, value, created_at, month, day, year FROM entry WHERE id = ?`
+
+	stmt, err := es.EntryStore.DB.Prepare(query)
+	if err != nil {
+		log.Print(err)
+		return Entry{}, err
+	}
+
+	defer stmt.Close()
+	e := Entry{}
+
+	err = stmt.QueryRow(id).Scan(&e.ID, &e.Type, &e.Status, &e.CreatedBy, &e.Value, &e.CreatedAt, &e.Month, &e.Day, &e.Year)
+	if err != nil {
+			log.Print(err)
+			return Entry{}, err
+		}
+
+
+	return e, nil
 }

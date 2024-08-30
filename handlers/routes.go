@@ -24,5 +24,6 @@ func SetupRoutes(e *echo.Echo, ah *AuthHandler, jh *JournalHandler) {
 	journalGroup.GET("", jh.HomeHandler)
 	journalGroup.GET("/:year/:month", jh.MonthHandler)
 	journalGroup.GET("/:year/:month/:date", jh.DayHandler)
+	journalGroup.GET("/:year/:month/:date/delete/:id", jh.DeleteHandler)
 	journalGroup.POST("/:year/:month/:date", jh.DayHandler)
 }

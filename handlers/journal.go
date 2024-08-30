@@ -16,7 +16,10 @@ import (
 type EntryService interface {
 	GetAllEntriesByUser(id int) ([]services.Entry, error)
 	GetAllEntriesByDate(id int, month, day, year int) ([]services.Entry, error)
+	GetAllEntriesByMonth(id int, month, year int) ([]services.Entry, error)
 	CreateEntry(user int, typ string, status string, value float64, month, day, year int) error
+	DeleteEntry(id int) error
+	GetEntryByID(id int) (services.Entry, error)
 }
 
 type JournalHandler struct {
@@ -82,7 +85,6 @@ func (jh *JournalHandler) DayHandler(c echo.Context) error {
 		formdata["error"] = "Error Fetching Entries"
 	}
 
-	log.Print(entries)
 	if c.Request().Method == "POST" {
 		value, err := strconv.Atoi(c.FormValue("value"))
 		typ := c.FormValue("type")
@@ -107,7 +109,7 @@ func (jh *JournalHandler) DayHandler(c echo.Context) error {
 		}
 	}
 
-	jourView := journal.Day(fromProtected, entries, formdata)
+	jourView := journal.Day(fromProtected, entries, formdata, year, month, date)
 	c.Set("ISERROR", false)
 
 	return renderView(c, journal.DayIndex(
@@ -210,4 +212,43 @@ func (jh *JournalHandler) MonthHandler(c echo.Context) error {
 		c.Get("ISERROR").(bool),
 		jourView,
 	))
+}
+
+func (jh *JournalHandler) DeleteHandler(c echo.Context) error {
+	log.Print("hi")
+	month, err := strconv.Atoi(c.Param("month"))
+	year, err := strconv.Atoi(c.Param("year"))
+	date, err := strconv.Atoi(c.Param("date"))
+	id, err := strconv.Atoi(c.Param("id"))
+
+	monthname := getMonthName(month)
+
+	isok, err := isNotFuture(year, month)
+
+	if monthname == "0" || !isok {
+		return c.Redirect(http.StatusFound, "/")
+	}
+
+	en, err := jh.EntryServices.GetEntryByID(id)
+
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid delete id"})
+	}
+
+	if en.CreatedBy != c.Get(user_id_key).(int) {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid delete id"})
+	}
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid date"})
+	}
+
+	err = jh.EntryServices.DeleteEntry(id)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Error Deleting"})
+	}
+
+	return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/journal/%d/%d/%d", year, month, date))
 }
