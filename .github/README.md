@@ -18,6 +18,7 @@ $ make dev
 ![s1](https://i.imgur.com/DUTp4qs.png)
 ![s2](https://i.imgur.com/k5vYIF4.png)
 ![s3](https://i.imgur.com/f0qpaPj.png)
+![s4](https://i.imgur.com/CSeR8Av.png)
 
 ### Todo
 - [x] Setup
