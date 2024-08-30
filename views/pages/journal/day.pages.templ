@@ -1,9 +1,20 @@
 package journal
 
 import (
+	"fmt"
 	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/layouts"
+	"strconv"
+	"time"
 )
+
+func FormatTimestamp(timestamp string) string {
+	t, err := time.Parse(time.RFC3339, timestamp)
+	if err != nil {
+		return "Invalid timestamp"
+	}
+	return t.Local().Format("15:04")
+}
 
 templ Day(fromProtected bool, entries []services.Entry, formdata map[string]string) {
 	<section class="min-h-screen p-4 md:p-8 w-screen relative  z-[10000] flex flex-col  gap-8  items-center text-white">
@@ -17,12 +28,12 @@ templ Day(fromProtected bool, entries []services.Entry, formdata map[string]stri
 			</div>
 			<div class="addform  w-full mt-6 ">
 				if len(formdata["error"]) > 0 {
-					<p class="text-red-400 class mb-3">Trynna do something sneaky?</p>
+					<p class="text-red-400 class mb-3">{ formdata["error"] }</p>
 				}
 				<div class="flex w-full gap-2">
 					<select name="type" class="w-2/3 bg-neutral-800/50 p-3 rounded-md " id="type">
 						<option value="height">Height</option>
-						<option value="width">Weight</option>
+						<option value="weight">Weight</option>
 						<option value="hr">Heart Rate</option>
 						<option value="bp">Blood Pressure</option>
 						<option value="sp">SPO2</option>
@@ -33,6 +44,25 @@ templ Day(fromProtected bool, entries []services.Entry, formdata map[string]stri
 				<input class="w-full bg-neutral-800/50 mt-3 rounded-md p-3 text-left focus:outline-none outline-none" type="text" name="desc" placeholder="Optional Short Description"/>
 			</div>
 		</form>
+		<div class="w-full h-[30rem] flex flex-col gap-4 md:h-[25rem] overflow-scroll-y md:w-2/3 lg:w-1/2 xl:w-2/5 bg-neutral-900/20 border-[1px] border-neutral-800 rounded-xl p-4">
+			for _, entry := range entries {
+				<div class="p-4 bg-neutral-800/50 flex flex-col rounded-xl ">
+					<div class="flex justify-between items-center">
+						<div class="flex gap-3 items-center text-xl">
+							<img src={ fmt.Sprintf("/static/%s.svg", entry.Type) }/>
+							<p>{ strconv.FormatFloat(entry.Value, 'f', -1, 64) }</p>
+						</div>
+						<div class="flex gap-3 items-center text-xl">
+							<p class="text-xl">{ FormatTimestamp(entry.CreatedAt) }</p>
+							<a href={ templ.URL(fmt.Sprintf("/journal/delete/%d", entry.ID)) } class=" text-sm text-red-400">Delete</a>
+						</div>
+					</div>
+					if len(entry.Status) > 0 {
+						<p class="mt-4 text-neutral-400">{ entry.Status }</p>
+					}
+				</div>
+			}
+		</div>
 	</section>
 	<script>
         const ADD = document.querySelector('.ADD');

@@ -14,7 +14,9 @@ import (
 )
 
 type EntryService interface {
-	GetAllEntriesByUser(id int) []services.Entry
+	GetAllEntriesByUser(id int) ([]services.Entry, error)
+	GetAllEntriesByDate(id int, month, day, year int) ([]services.Entry, error)
+	CreateEntry(user int, typ string, status string, value float64, month, day, year int) error
 }
 
 type JournalHandler struct {
@@ -74,8 +76,13 @@ func (jh *JournalHandler) DayHandler(c echo.Context) error {
 		return errors.New("invalid type for key 'FROMPROTECTED'")
 	}
 
-	entries := jh.EntryServices.GetAllEntriesByUser(c.Get(user_id_key).(int))
+	entries, err := jh.EntryServices.GetAllEntriesByDate(c.Get(user_id_key).(int), month, date, year)
 
+	if err != nil {
+		formdata["error"] = "Error Fetching Entries"
+	}
+
+	log.Print(entries)
 	if c.Request().Method == "POST" {
 		value, err := strconv.Atoi(c.FormValue("value"))
 		typ := c.FormValue("type")
@@ -92,7 +99,12 @@ func (jh *JournalHandler) DayHandler(c echo.Context) error {
 			formdata["error"] = "Invalid values detected"
 		}
 
-		log.Println(typ, value, stat, formdata)
+		if !stringInSlice(typ, allowed) {
+			formdata["error"] = "Error Creating Entry"
+		} else {
+			err = jh.EntryServices.CreateEntry(c.Get(user_id_key).(int), typ, stat, float64(value), month, date, year)
+			entries, err = jh.EntryServices.GetAllEntriesByDate(c.Get(user_id_key).(int), month, date, year)
+		}
 	}
 
 	jourView := journal.Day(fromProtected, entries, formdata)

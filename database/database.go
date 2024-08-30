@@ -73,6 +73,9 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		status TEXT NOT NULL,
 		created_by INT NOT NULL,
 		value FLOAT NOT NULL,
+		month INT NOT NULL,
+		year INT NOT NULL,
+		day INT NOT NULL,
 		FOREIGN KEY(created_by) REFERENCES users(id)
 	);`
 
