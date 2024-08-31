@@ -57,6 +57,20 @@ func (ps *ProfileService) UpdateProfilePicture(u User, pfp string) error {
 	return err
 }
 
+func (ps *ProfileService) UpdateProfileHeight(u int, height int) error {
+	stmt := `UPDATE profile SET height = ? WHERE profile_of = ?`
+	_, err := ps.ProfileStore.DB.Exec(stmt, height, u)
+
+	return err
+}
+
+func (ps *ProfileService) UpdateProfileWeight(u int, weight int) error {
+	stmt := `UPDATE profile SET weiht = ? WHERE profile_of = ?`
+	_, err := ps.ProfileStore.DB.Exec(stmt, weight, u)
+
+	return err
+}
+
 func (ps *ProfileService) GetProfileByUserId(id int) (Profile, error) {
 	query := `SELECT id, level, profile_picture, weight, height, birthday, height_unit, weight_unit FROM profile WHERE profile_of = ?`
 

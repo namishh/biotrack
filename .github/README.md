@@ -42,6 +42,10 @@ $ make dev
     - [x] Add Entry
     - [x] Delete Entry
     - [x] View Entry
+    - [x] Validate Medical Data
+    - [x] Auto Update Height and Weight
   - [ ] Show Entries on Calendar
-
+- [ ] Dashboard
+  - [ ] Display User Data
+  - [ ] Display User Progress
 ... more to come

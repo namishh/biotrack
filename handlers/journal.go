@@ -54,6 +54,19 @@ func (jh *JournalHandler) HomeHandler(c echo.Context) error {
 	))
 }
 
+func isCurrentDay(year, month, date int) bool {
+	// Create a time.Time object from the given date
+	givenDate := time.Date(year, time.Month(month), date, 0, 0, 0, 0, time.Local)
+
+	// Get the current date
+	currentDate := time.Now()
+
+	// Compare year, month, and day
+	return givenDate.Year() == currentDate.Year() &&
+		givenDate.Month() == currentDate.Month() &&
+		givenDate.Day() == currentDate.Day()
+}
+
 func (jh *JournalHandler) DayHandler(c echo.Context) error {
 
 	month, err := strconv.Atoi(c.Param("month"))
@@ -101,11 +114,38 @@ func (jh *JournalHandler) DayHandler(c echo.Context) error {
 			formdata["error"] = "Invalid values detected"
 		}
 
+		// Validate data
+		if value <= 0 {
+			formdata["error"] = "Invalid values detected"
+		}
+
+		if typ == "sp" && value > 100 {
+			formdata["value"] = "Invalid values Detected"
+		}
+
+		if typ == "hr" && value > 200 {
+			formdata["value"] = "Invalid values Detected"
+		}
+
+		// Update profile's height and weight if the entry is of type height or weight
+
+		if typ == "height" && isCurrentDay(year, month, date) {
+			err = jh.ProfileServices.UpdateProfileHeight(c.Get(user_id_key).(int), value)
+		}
+
+		if typ == "weight" && isCurrentDay(year, month, date) {
+			err = jh.ProfileServices.UpdateProfileWeight(c.Get(user_id_key).(int), value)
+		}
+
 		if !stringInSlice(typ, allowed) {
 			formdata["error"] = "Error Creating Entry"
 		} else {
 			err = jh.EntryServices.CreateEntry(c.Get(user_id_key).(int), typ, stat, float64(value), month, date, year)
 			entries, err = jh.EntryServices.GetAllEntriesByDate(c.Get(user_id_key).(int), month, date, year)
+		}
+
+		if err != nil {
+			formdata["error"] = "Error Creating Entry"
 		}
 	}
 
@@ -231,12 +271,15 @@ func (jh *JournalHandler) DeleteHandler(c echo.Context) error {
 
 	en, err := jh.EntryServices.GetEntryByID(id)
 
-
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid delete id"})
 	}
 
 	if en.CreatedBy != c.Get(user_id_key).(int) {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid delete id"})
+	}
+
+	if en.Day != date || en.Month != month || en.Year != year {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid delete id"})
 	}
 
