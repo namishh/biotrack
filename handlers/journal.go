@@ -139,7 +139,9 @@ func (jh *JournalHandler) DayHandler(c echo.Context) error {
 
 		if !stringInSlice(typ, allowed) {
 			formdata["error"] = "Error Creating Entry"
-		} else {
+		}
+
+		if len(formdata) < 1 {
 			err = jh.EntryServices.CreateEntry(c.Get(user_id_key).(int), typ, stat, float64(value), month, date, year)
 			entries, err = jh.EntryServices.GetAllEntriesByDate(c.Get(user_id_key).(int), month, date, year)
 		}
@@ -206,6 +208,24 @@ func (jh *JournalHandler) MonthHandler(c echo.Context) error {
 
 	m := make([]map[string]string, daysInMonth(year, month))
 
+	// make a list of list of Entries in order of the days of the month
+
+	en := make([][]services.Entry, daysInMonth(year, month))
+
+	for i := 0; i < daysInMonth(year, month); i++ {
+		en[i] = make([]services.Entry, 0)
+		entries, err := jh.EntryServices.GetAllEntriesByDate(c.Get(user_id_key).(int), month, i+1, year)
+		if err != nil {
+			return c.Redirect(http.StatusFound, "/")
+		}
+
+		for _, entry := range entries {
+			en[i] = append(en[i], entry)
+		}
+	}
+
+	log.Print(en)
+
 	for i := 0; i < daysInMonth(year, month); i++ {
 		m[i] = make(map[string]string)
 		m[i]["date"] = strconv.Itoa(i + 1)
@@ -242,7 +262,7 @@ func (jh *JournalHandler) MonthHandler(c echo.Context) error {
 		return errors.New("invalid type for key 'FROMPROTECTED'")
 	}
 	// isError = false
-	jourView := journal.Month(fromProtected, monthname, year, m, extras, e2, nm, ny, pm, py, month)
+	jourView := journal.Month(fromProtected, monthname, year, m, extras, e2, nm, ny, pm, py, month, en)
 	c.Set("ISERROR", false)
 
 	return renderView(c, journal.MonthIndex(

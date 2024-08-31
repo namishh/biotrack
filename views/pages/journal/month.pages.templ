@@ -2,11 +2,12 @@ package journal
 
 import (
 	"fmt"
+	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/layouts"
 	"strconv"
 )
 
-templ Month(fromProtected bool, month string, year int, me []map[string]string, extras int, e2 int, nm, ny, pm, py, mi int) {
+templ Month(fromProtected bool, month string, year int, me []map[string]string, extras int, e2 int, nm, ny, pm, py, mi int, entries [][]services.Entry) {
 	<div class="z-[100000] hidden NAVBAR w-full flex justify-center items-center p-4">
 		<div class="flex p-4 rounded-md w-full xl:w-1/2 items-center bg-zinc-900 justify-between">
 			<div class="flex items-center">
@@ -54,9 +55,26 @@ templ Month(fromProtected bool, month string, year int, me []map[string]string, 
 			for i := 1; i < extras; i++ {
 				<div class="text-center text-gray-400  p-4 text-xl"></div>
 			}
-			for _,j := range me {
-				<a href={ templ.URL(fmt.Sprintf("/journal/%d/%d/%s", year, mi, j["date"])) } class="text-center transition hover:bg-purple-400/10 text-xl flex justify-center items-center">
+			for i,j := range me {
+				<a href={ templ.URL(fmt.Sprintf("/journal/%d/%d/%s", year, mi, j["date"])) } class="text-center transition hover:bg-purple-400/10 text-xl flex justify-center items-center relative">
 					<div class="text-center text-gray-100 text-2xl">{ j["date"] }</div>
+					<div class="absolute flex bottom-0 w-full">
+						for _,k := range entries[i] {
+							if k.Type == "bp" {
+								<div class="bg-red-400 p-[4px] flex-1"></div>
+							} else if k.Type == "sugar" {
+								<div class="bg-green-300 p-[4px] flex-1"></div>
+							} else if k.Type == "height" {
+								<div class="bg-amber-300 p-[4px] flex-1"></div>
+							} else if k.Type == "weight" {
+								<div class="bg-blue-400 p-[4px] flex-1"></div>
+							} else if k.Type == "sp" {
+								<div class="bg-teal-300 p-[4px] flex-1"></div>
+							} else if k.Type == "hr" {
+								<div class="bg-rose-400 p-[4px] flex-1"></div>
+							}
+						}
+					</div>
 				</a>
 			}
 			for i := 0; i < e2; i++ {

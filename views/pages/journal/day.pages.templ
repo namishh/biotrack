@@ -30,6 +30,9 @@ templ Day(fromProtected bool, entries []services.Entry, formdata map[string]stri
 				if len(formdata["error"]) > 0 {
 					<p class="text-red-400 class mb-3">{ formdata["error"] }</p>
 				}
+				if len(formdata["value"]) > 0 {
+					<p class="text-red-400 class mb-3">{ formdata["value"] }</p>
+				}
 				<div class="flex w-full gap-2">
 					<select name="type" class="w-2/3 bg-neutral-800/50 p-3 rounded-md " id="type">
 						<option value="height">Height</option>

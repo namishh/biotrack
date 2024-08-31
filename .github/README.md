@@ -35,7 +35,7 @@ $ make dev
   - [x] Edit Account
   - [x] Profile Customization
   - [x] Save units
-- [ ] Entry
+- [x] Entry
   - [x] Display Calendar Layout
   - [x] Change Months
   - [x] Entries
@@ -44,8 +44,9 @@ $ make dev
     - [x] View Entry
     - [x] Validate Medical Data
     - [x] Auto Update Height and Weight
-  - [ ] Show Entries on Calendar
+  - [x] Show Entries on Calendar
 - [ ] Dashboard
   - [ ] Display User Data
   - [ ] Display User Progress
+
 ... more to come
