@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
@@ -36,13 +37,54 @@ func stringInSlice(a string, list []string) bool {
 	return false
 }
 
+func groupEntriesByType(entries []services.Entry) map[string][]services.Entry {
+	result := make(map[string][]services.Entry)
+
+	// First, group all entries by type
+	for _, entry := range entries {
+		result[entry.Type] = append(result[entry.Type], entry)
+	}
+
+	// Then, for each type, sort the entries and keep only the last 10 (or all if less than 10)
+	for entryType, typeEntries := range result {
+		// Sort entries by date in increasing order
+		sort.Slice(typeEntries, func(i, j int) bool {
+			dateI := time.Date(typeEntries[i].Year, time.Month(typeEntries[i].Month), typeEntries[i].Day, 0, 0, 0, 0, time.UTC)
+			dateJ := time.Date(typeEntries[j].Year, time.Month(typeEntries[j].Month), typeEntries[j].Day, 0, 0, 0, 0, time.UTC)
+			return dateI.Before(dateJ)
+		})
+
+		// Keep only the last 10 entries (or all if less than 10)
+		if len(typeEntries) > 10 {
+			result[entryType] = typeEntries[len(typeEntries)-10:]
+		} else {
+			result[entryType] = typeEntries
+		}
+	}
+
+	return result
+}
+
 func (jh *JournalHandler) HomeHandler(c echo.Context) error {
 	fromProtected, ok := c.Get("FROMPROTECTED").(bool)
 	if !ok {
 		return errors.New("invalid type for key 'FROMPROTECTED'")
 	}
+	entries, err := jh.EntryServices.GetAllEntriesByUser(c.Get(user_id_key).(int))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Failed to get entries"})
+	}
+
+	groupedEntries := groupEntriesByType(entries)
+	profile, err := jh.ProfileServices.GetProfileByUserId(c.Get(user_id_key).(int))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Failed to get entries"})
+	}
+
+	log.Println(groupedEntries)
 	// isError = false
-	jourView := journal.Journal(fromProtected)
+	jourView := journal.Journal(fromProtected, groupedEntries, profile)
 	c.Set("ISERROR", false)
 
 	return renderView(c, journal.JournalIndex(
@@ -224,8 +266,6 @@ func (jh *JournalHandler) MonthHandler(c echo.Context) error {
 		}
 	}
 
-	log.Print(en)
-
 	for i := 0; i < daysInMonth(year, month); i++ {
 		m[i] = make(map[string]string)
 		m[i]["date"] = strconv.Itoa(i + 1)
@@ -275,7 +315,6 @@ func (jh *JournalHandler) MonthHandler(c echo.Context) error {
 }
 
 func (jh *JournalHandler) DeleteHandler(c echo.Context) error {
-	log.Print("hi")
 	month, err := strconv.Atoi(c.Param("month"))
 	year, err := strconv.Atoi(c.Param("year"))
 	date, err := strconv.Atoi(c.Param("date"))
@@ -314,4 +353,18 @@ func (jh *JournalHandler) DeleteHandler(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/journal/%d/%d/%d", year, month, date))
+}
+
+func (jh *JournalHandler) NewHandler(c echo.Context) error {
+	currentDate := time.Now()
+	string := fmt.Sprintf("/journal/%d/%d/%d", currentDate.Year(), int(currentDate.Month()), currentDate.Day())
+
+	return c.Redirect(http.StatusFound, string)
+}
+
+func (jh *JournalHandler) CalendarHandler(c echo.Context) error {
+	currentDate := time.Now()
+	string := fmt.Sprintf("/journal/%d/%d", currentDate.Year(), int(currentDate.Month()))
+
+	return c.Redirect(http.StatusFound, string)
 }

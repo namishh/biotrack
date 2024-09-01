@@ -13,12 +13,23 @@ $ make css
 $ make dev
 ```
 
+To build
+
+```bash
+$ make build
+
+# TO build AND run the project
+$ make run
+```
+
+
 ### Screenshots
 
 ![s1](https://i.imgur.com/DUTp4qs.png)
 ![s2](https://i.imgur.com/k5vYIF4.png)
-![s3](https://i.imgur.com/4mlzUDx.png)
-![s4](https://i.imgur.com/CSeR8Av.png)
+![s3](https://i.imgur.com/X7SiCC5.png)
+![s4](https://i.imgur.com/4mlzUDx.png)
+![s5](https://i.imgur.com/CSeR8Av.png)
 
 ### Todo
 - [x] Setup
@@ -45,8 +56,7 @@ $ make dev
     - [x] Validate Medical Data
     - [x] Auto Update Height and Weight
   - [x] Show Entries on Calendar
-- [ ] Dashboard
-  - [ ] Display User Data
-  - [ ] Display User Progress
+- [x] Dashboard
+  - [x] Display User Data
 
 ... more to come

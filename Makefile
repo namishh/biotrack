@@ -1,4 +1,4 @@
-build-app:
+build:
 	@bunx tailwind -i ./assets/app.css -o ./public/app.css
 	@templ generate
 	@go build -o bin/app ./app/
@@ -6,7 +6,7 @@ build-app:
 css:
 	@bunx tailwind -i ./assets/app.css -o ./public/app.css --watch
 
-run: build-app
+run: build
 	@./bin/app
 
 templ:

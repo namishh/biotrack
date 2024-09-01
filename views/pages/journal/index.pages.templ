@@ -1,9 +1,173 @@
 package journal
 
-import "github.com/namishh/biotrack/views/layouts"
+import (
+	"github.com/namishh/biotrack/services"
+	"github.com/namishh/biotrack/views/layouts"
+	"strconv"
+)
 
-templ Journal(fromProtected bool) {
-	<section class="min-h-screen relative mx-auto z-[10000] w-screen flex  gap-8 text-center items-center justify-center text-white">hi</section>
+templ Journal(fromProtected bool, entries map[string][]services.Entry, profile services.Profile) {
+	<section class="min-h-screen relative mx-auto z-[10000] lg:w-3/4 md:w-5/6 w-full flex flex-col gap-8 text-center pb-8 pl-8 pr-8 pt-32 items-center text-white">
+		<div class="w-full">
+			Go <a href="/journal/new" class="text-purple-400">here</a> page to add a new entry. Or <a href="/journal/calendar" class="text-purple-400">here</a> to open the calendar.
+		</div>
+		<div class="charts flex flex-wrap w-full">
+			<div class="p-2 w-full lg:w-1/2">
+				<div class="h-[18rem] w-full rounded-xl p-3 bg-neutral-800/40">
+					<p class="text-left">Blood Pressure</p>
+					<canvas class="mb-4" id="bloodPressureChart"></canvas>
+				</div>
+			</div>
+			<div class="p-2 w-full lg:w-1/2">
+				<div class="h-[18rem]  w-full rounded-xl bg-neutral-800/40 p-2">
+					<p class="text-left">Blood Sugar</p>
+					<canvas class="mb-4" id="bloodSugarChart"></canvas>
+				</div>
+			</div>
+			<div class="p-2 w-full lg:w-1/2">
+				<div class="h-[18rem] w-full rounded-xl bg-neutral-800/40 p-2">
+					<p class="text-left">SpO2</p>
+					<canvas class="mb-4" id="spO2Chart"></canvas>
+				</div>
+			</div>
+			<div class="p-2 w-full lg:w-1/2">
+				<div class="h-[18rem] w-full rounded-xl bg-neutral-800/40 p-2">
+					<p class="text-left">Heart Rate</p>
+					<canvas class="mb-4" id="heartRateChart"></canvas>
+				</div>
+			</div>
+			<div class="p-2 w-full lg:w-1/2">
+				<div class="h-[18rem] w-full rounded-xl bg-neutral-800/40 p-2">
+					<p class="text-left">Weight</p>
+					<canvas class="mb-4" id="weightChart"></canvas>
+				</div>
+			</div>
+			<div class="p-2 w-full h-[19rem] lg:w-1/2">
+				<div class="h-full w-full flex flex-col justify-between rounded-xl bg-neutral-800/40 p-2">
+					<p class="text-left">Height</p>
+					<div class="text-center self-center grow flex items-center justify-center">
+						<p class="text-6xl">{ strconv.FormatFloat(profile.Height, 'f', -1, 64) } <span class="text-3xl">{ profile.HeightUnit }</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	@templ.JSONScript("entriesData", entries)
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+	(function(){
+		// Get the entries data from the JSON script
+		var entriesData = JSON.parse(document.getElementById('entriesData').textContent);
+
+		// Function to create a chart
+		function createChart(ctx, label, color) {
+			return new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: [],
+					datasets: [{
+						label: label,
+						data: [],
+						borderColor: color,
+						tension: 0.3
+					}]
+				},
+				options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+        x: {
+            ticks: {
+                maxRotation: 45,
+                minRotation: 0,
+                autoSkip: true,
+                maxTicksLimit: 10
+            }
+        },
+        y: {
+            beginAtZero: false
+        }
+    },
+    plugins: {
+        legend: {
+            display: false
+        },
+        tooltip: {
+            callbacks: {
+                title: function(context) {
+                    return context[0].label;
+                }
+            }
+        }
+    }
+}
+			});
+		}
+
+		// Create charts
+		var bpChart = createChart(document.getElementById('bloodPressureChart').getContext('2d'), 'Blood Pressure', '#f87171');
+		var hrChart = createChart(document.getElementById('heartRateChart').getContext('2d'), 'Heart Rate', '#fb7185');
+		var weightChart = createChart(document.getElementById('weightChart').getContext('2d'), 'Weight', '#60a5fa');
+		var spO2Chart = createChart(document.getElementById('spO2Chart').getContext('2d'), 'SpO2', '#5eead4');
+		var bloodSugarChart = createChart(document.getElementById('bloodSugarChart').getContext('2d'), 'Blood Sugar', '#86efac');
+
+		// Function to populate chart data
+		function populateChartData(entries) {
+			var chartData = {
+				blood_pressure: { labels: [], data: [] },
+				heart_rate: { labels: [], data: [] },
+				weight: { labels: [], data: [] },
+				spo2: { labels: [], data: [] },
+				blood_sugar: { labels: [], data: [] }
+			};
+
+			for (var type in entries) {
+				entries[type].forEach(function(entry) {
+				console.log(entry)
+					var date = new Date(`${entry.month}/${entry.day}/${entry.year}`).toLocaleDateString();
+					switch(type) {
+						case "bp":
+							chartData.blood_pressure.labels.push(date);
+							chartData.blood_pressure.data.push(entry.value);
+							break;
+						case "hr":
+							chartData.heart_rate.labels.push(date);
+							chartData.heart_rate.data.push(entry.value);
+							break;
+						case "weight":
+							chartData.weight.labels.push(date);
+							chartData.weight.data.push(entry.value);
+							break;
+						case "sp":
+							chartData.spo2.labels.push(date);
+							chartData.spo2.data.push(entry.value);
+							break;
+						case "sugar":
+							chartData.blood_sugar.labels.push(date);
+							chartData.blood_sugar.data.push(entry.value);
+							break;
+					}
+				});
+			}
+
+			// Update all charts
+			updateChart(bpChart, chartData.blood_pressure);
+			updateChart(hrChart, chartData.heart_rate);
+			updateChart(weightChart, chartData.weight);
+			updateChart(spO2Chart, chartData.spo2);
+			updateChart(bloodSugarChart, chartData.blood_sugar);
+		}
+
+		function updateChart(chart, data) {
+			chart.data.labels = data.labels;
+			chart.data.datasets[0].data = data.data;
+			chart.update();
+		}
+
+		// Call the function with the parsed entries data
+		populateChartData(entriesData);
+	})()
+	</script>
 }
 
 templ JournalIndex(
