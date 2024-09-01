@@ -10,6 +10,8 @@ require (
 	golang.org/x/crypto v0.26.0
 )
 
+require github.com/google/generative-ai-go v0.17.0 // indirect
+
 require github.com/lucasb-eyer/go-colorful v1.2.0 // direct
 
 require github.com/joho/godotenv v1.5.1 // direct
@@ -24,7 +26,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/net v0.24.0 // indirect
+	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sys v0.23.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.5.0 // indirect

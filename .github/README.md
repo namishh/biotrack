@@ -58,5 +58,13 @@ $ make run
   - [x] Show Entries on Calendar
 - [x] Dashboard
   - [x] Display User Data
-
+- [ ] Chat 
+  - [ ] Setup Messages Struct Adn Database
+  - [ ] Make Chat Window 
+  - [ ] Send Messages 
+  - [ ] Generate Stuff
+    - [ ] Advice 
+    - [ ] Recipes 
+    - [ ] Graphs 
+    
 ... more to come
