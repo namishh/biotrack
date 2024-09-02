@@ -84,6 +84,32 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		return fmt.Errorf("Failed to create table: %s", err)
 	}
 
+	stmt = `CREATE TABLE IF NOT EXISTS charts (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			created_at DATETIME default CURRENT_TIMESTAMP,
+			labels TEXT NOT NULL,
+			data TEXT NOT NULL,
+			chat_id INT NOT NULL,
+			FOREIGN KEY(chat_id) REFERENCES chat(id)
+		);`
+
+	_, err = DB.Exec(stmt)
+	if err != nil {
+		return fmt.Errorf("Failed to create table: %s", err)
+	}
+
+	stmt = `CREATE TABLE IF NOT EXISTS chat (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		created_at DATETIME default CURRENT_TIMESTAMP,
+		sender TEXT,
+		message TEXT NOT NULL
+	);`
+
+	_, err = DB.Exec(stmt)
+	if err != nil {
+		return fmt.Errorf("Failed to create table: %s", err)
+	}
+
 	return nil
 }
 

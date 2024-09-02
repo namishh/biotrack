@@ -3,7 +3,6 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"sort"
 	"strconv"
@@ -81,8 +80,6 @@ func (jh *JournalHandler) HomeHandler(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Failed to get entries"})
 	}
-
-	log.Println(groupedEntries)
 	// isError = false
 	jourView := journal.Journal(fromProtected, groupedEntries, profile)
 	c.Set("ISERROR", false)

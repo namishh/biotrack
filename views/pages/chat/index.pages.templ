@@ -1,0 +1,21 @@
+package chat
+
+import "github.com/namishh/biotrack/views/layouts"
+
+templ Home(fromProtected bool) {
+	<section class="min-h-screen text-white relative mx-auto z-[10000] w-screen flex  gap-8 text-center items-center justify-center">
+		chat here
+	</section>
+}
+
+templ HomeIndex(
+	title,
+	username string,
+	fromProtected bool,
+	isError bool,
+	cmp templ.Component,
+) {
+	@layouts.Base(title, username, fromProtected, isError) {
+		@cmp
+	}
+}

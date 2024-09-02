@@ -59,12 +59,11 @@ $ make run
 - [x] Dashboard
   - [x] Display User Data
 - [ ] Chat 
-  - [ ] Setup Messages Struct Adn Database
+  - [ ] Setup Messages Struct and Database
   - [ ] Make Chat Window 
   - [ ] Send Messages 
   - [ ] Generate Stuff
     - [ ] Advice 
     - [ ] Recipes 
     - [ ] Graphs 
-    
-... more to come
+- [ ] The End    
