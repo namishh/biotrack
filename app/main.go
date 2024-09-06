@@ -50,7 +50,7 @@ func main() {
 	ps := services.NewProfileService(services.Profile{}, store)
 	es := services.NewEntryService(services.Entry{}, store)
 	as := services.NewAvatarService(services.Avatar{}, store)
-	cs := services.NewChatService(services.Chat{}, services.Chart{}, store)
+	cs, _ := services.NewChatService(services.Chat{}, services.Chart{}, store)
 
 	ah := handlers.NewAuthHandler(us, ps, as, es)
 

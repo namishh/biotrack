@@ -58,12 +58,14 @@ $ make run
   - [x] Show Entries on Calendar
 - [x] Dashboard
   - [x] Display User Data
-- [ ] Chat 
-  - [ ] Setup Messages Struct and Database
-  - [ ] Make Chat Window 
-  - [ ] Send Messages 
+- [ ] Chat
+  - [x] Setup Messages Struct and Database
+  - [x] Make Chat Window
+  - [ ] Send Messages
   - [ ] Generate Stuff
-    - [ ] Advice 
-    - [ ] Recipes 
-    - [ ] Graphs 
-- [ ] The End    
+    - [ ] Advice
+    - [ ] Recipes
+    - [ ] Graphs
+- [ ] The End
+  - [ ] Error Pages
+  - [ ] Cleaning up code

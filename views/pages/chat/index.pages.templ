@@ -3,8 +3,14 @@ package chat
 import "github.com/namishh/biotrack/views/layouts"
 
 templ Home(fromProtected bool) {
-	<section class="min-h-screen text-white relative mx-auto z-[10000] w-screen flex  gap-8 text-center items-center justify-center">
-		chat here
+	<section class="h-screen text-white relative mx-auto z-[10000] w-screen flex  gap-8 text-center  justify-center">
+		<div class="pt-24 md:w-1/2 w-full h-full flex flex-col justify-end items-center p-8">
+			<div class="chat container my-4 grow"></div>
+			<form action="" method="POST" class="flex bg-neutral-800/40 w-full rounded-xl ">
+				<input class="w-3/4 md:w-5/6 p-3  bg-transparent  focus:outline-none outline-none" placeholder="Start typing away!"/>
+				<button class="w-1/4 md:w-1/6 bg-purple-400 p-3 rounded-r-xl text-black font-bold">Submit</button>
+			</form>
+		</div>
 	</section>
 }
 

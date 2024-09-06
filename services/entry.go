@@ -33,12 +33,7 @@ func NewEntryService(entry Entry, store database.DatabaseStore) *EntryServices {
 func (es *EntryServices) CreateEntry(user int, typ string, status string, value float64, month, day, year int) error {
 	stmt := `INSERT INTO entry (value, status, type, created_by, month, day, year) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	_, err := es.EntryStore.DB.Exec(stmt, value, status, typ, user, month, day, year)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (es *EntryServices) GetAllEntriesByUser(id int) ([]Entry, error) {
@@ -151,10 +146,9 @@ func (es *EntryServices) GetEntryByID(id int) (Entry, error) {
 
 	err = stmt.QueryRow(id).Scan(&e.ID, &e.Type, &e.Status, &e.CreatedBy, &e.Value, &e.CreatedAt, &e.Month, &e.Day, &e.Year)
 	if err != nil {
-			log.Print(err)
-			return Entry{}, err
-		}
-
+		log.Print(err)
+		return Entry{}, err
+	}
 
 	return e, nil
 }
