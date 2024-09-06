@@ -25,7 +25,7 @@ $ make run
 
 ### Screenshots
 
-![s1](https://i.imgur.com/DUTp4qs.png)
+![s1](https://i.imgur.com/NNaq5Lp.png)
 ![s2](https://i.imgur.com/k5vYIF4.png)
 ![s3](https://i.imgur.com/X7SiCC5.png)
 ![s4](https://i.imgur.com/4mlzUDx.png)
@@ -65,7 +65,6 @@ $ make run
   - [x] Generate Stuff
     - [x] Advice
     - [x] Recipes
-    - [ ] Graphs
   - [ ] Render
     - [ ] User Chats
     - [ ] Markdown
