@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/namishh/biotrack/database"
@@ -12,6 +13,16 @@ type Entry struct {
 	Type      string  `json:"type"`
 	Status    string  `json:"status"`
 	CreatedBy int     `json:"created_by"`
+	Value     float64 `json:"value"`
+	Month     int     `json:"month"`
+	Year      int     `json:"year"`
+	Day       int     `json:"day"`
+}
+
+type FormattedEntry struct {
+	ID        int     `json:"id"`
+	CreatedAt string  `json:"created_at"`
+	Status    string  `json:"status"`
 	Value     float64 `json:"value"`
 	Month     int     `json:"month"`
 	Year      int     `json:"year"`
@@ -151,4 +162,38 @@ func (es *EntryServices) GetEntryByID(id int) (Entry, error) {
 	}
 
 	return e, nil
+}
+
+func (es *EntryServices) GetFormattedEntriesByUser(userID int) (string, error) {
+	entries, err := es.GetAllEntriesByUser(userID)
+	if err != nil {
+		log.Printf("Error getting entries for user %d: %v", userID, err)
+		return "", err
+	}
+
+	formattedEntries := make(map[string][]FormattedEntry)
+
+	for _, entry := range entries {
+		formattedEntry := FormattedEntry{
+			ID:        entry.ID,
+			CreatedAt: entry.CreatedAt,
+			Status:    entry.Status,
+			Value:     entry.Value,
+			Month:     entry.Month,
+			Year:      entry.Year,
+			Day:       entry.Day,
+		}
+
+		// Append the entry to the appropriate type array
+		formattedEntries[entry.Type] = append(formattedEntries[entry.Type], formattedEntry)
+	}
+
+	// Convert the formatted entries to JSON
+	jsonData, err := json.MarshalIndent(formattedEntries, "", "  ")
+	if err != nil {
+		log.Printf("Error marshaling entries to JSON: %v", err)
+		return "", err
+	}
+
+	return string(jsonData), nil
 }

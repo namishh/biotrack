@@ -28,7 +28,8 @@ func SetupRoutes(e *echo.Echo, ah *AuthHandler, jh *JournalHandler, ch *ChatHand
 	journalGroup.GET("/:year/:month/:date", jh.DayHandler)
 	journalGroup.GET("/:year/:month/:date/delete/:id", jh.DeleteHandler)
 	journalGroup.POST("/:year/:month/:date", jh.DayHandler)
-	
+
 	chatGroup := e.Group("/chat", ah.authMiddleware)
 	chatGroup.GET("", ch.HomeHandler)
+	chatGroup.POST("", ch.HomeHandler)
 }

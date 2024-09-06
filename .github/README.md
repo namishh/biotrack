@@ -61,11 +61,14 @@ $ make run
 - [ ] Chat
   - [x] Setup Messages Struct and Database
   - [x] Make Chat Window
-  - [ ] Send Messages
-  - [ ] Generate Stuff
-    - [ ] Advice
-    - [ ] Recipes
+  - [x] Send Messages
+  - [x] Generate Stuff
+    - [x] Advice
+    - [x] Recipes
     - [ ] Graphs
+  - [ ] Render
+    - [ ] User Chats
+    - [ ] Markdown
 - [ ] The End
   - [ ] Error Pages
   - [ ] Cleaning up code

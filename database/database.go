@@ -110,6 +110,13 @@ func CreateMigrations(DBName string, DB *sql.DB) error {
 		return fmt.Errorf("Failed to create table: %s", err)
 	}
 
+	// stmt = `delete from chat;`
+
+	// _, err = DB.Exec(stmt)
+	// if err != nil {
+	// 	return fmt.Errorf("Failed to create table: %s", err)
+	// }
+
 	return nil
 }
 

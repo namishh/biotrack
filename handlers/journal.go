@@ -19,6 +19,7 @@ type EntryService interface {
 	GetAllEntriesByMonth(id int, month, year int) ([]services.Entry, error)
 	CreateEntry(user int, typ string, status string, value float64, month, day, year int) error
 	DeleteEntry(id int) error
+	GetFormattedEntriesByUser(userID int) (string, error)
 	GetEntryByID(id int) (services.Entry, error)
 }
 
