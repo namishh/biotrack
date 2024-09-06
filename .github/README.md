@@ -30,7 +30,7 @@ $ make run
 ![s3](https://i.imgur.com/X7SiCC5.png)
 ![s4](https://i.imgur.com/4mlzUDx.png)
 ![s5](https://i.imgur.com/CSeR8Av.png)
-![s6](https://i.ibb.co/DtCWBm4/image.png)
+![s6](https://i.imgur.com/VlXu2mT.png)
 ![s7](https://i.imgur.com/0Ahpb3a.png)
 ![s8](https://i.imgur.com/Z5FGbwh.png)
 
