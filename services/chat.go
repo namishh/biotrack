@@ -19,24 +19,15 @@ type Chat struct {
 	CreatedAt string `json:"created_at"`
 }
 
-type Chart struct {
-	Id        int    `json:"id"`
-	Labels    string `json:"labels"`
-	Data      string `json:"data"`
-	ChatId    int    `json:"chat_id"`
-	CreatedAt string `json:"created_at"`
-}
-
 type ChatService struct {
 	Client    *genai.Client
 	Context   context.Context
 	Chat      Chat
-	Chart     Chart
 	ChatStore database.DatabaseStore
 	AI        *genai.ChatSession
 }
 
-func NewChatService(chat Chat, chart Chart, store database.DatabaseStore) (*ChatService, error) {
+func NewChatService(chat Chat, store database.DatabaseStore) (*ChatService, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("GEMINI")))
 	if err != nil {
@@ -51,7 +42,6 @@ func NewChatService(chat Chat, chart Chart, store database.DatabaseStore) (*Chat
 		Client:    client,
 		Context:   ctx,
 		Chat:      chat,
-		Chart:     chart,
 		ChatStore: store,
 		AI:        aiSession,
 	}, nil
@@ -173,7 +163,6 @@ func (cs *ChatService) GenerateResponse(id int, ud string) error {
 	}
 
 	res, err := cs.AI.SendMessage(cs.Context, genai.Text(last.Message))
-	log.Print(err)
 	if err != nil {
 		return err
 	}
@@ -186,7 +175,6 @@ func (cs *ChatService) GenerateResponse(id int, ud string) error {
 			}
 		}
 	}
-	log.Print(str)
 	err = cs.NewAIChat(id, str)
 
 	return err

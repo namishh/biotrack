@@ -67,9 +67,9 @@ $ make run
   - [x] Generate Stuff
     - [x] Advice
     - [x] Recipes
-  - [ ] Render
-    - [ ] User Chats
-    - [ ] Markdown
+  - [x] Render
+    - [x] User Chats
+    - [x] Markdown
 - [x] Final Touches
   - [x] Error Pages
   - [x] Cleaning up code

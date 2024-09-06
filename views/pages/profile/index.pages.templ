@@ -18,9 +18,9 @@ templ Profile(fromProtected bool, user services.User, profile services.Profile, 
 								<img src="/static/edit.svg"/>
 							</div>
 							if formdata["profile_picture"] != "" {
-								<img src={ formdata["profile_picture"] } id="pfp" class="w-20 h-20 rounded-full border-4 border-purple-400 transition hover:opacity-30 opacity-80"/>
+								<img src={ formdata["profile_picture"] } id="pfp" class="w-20 h-20 object-cover rounded-full border-4 border-purple-400 transition hover:opacity-30 opacity-80"/>
 							} else {
-								<img src={ profile.ProfilePicture } id="pfp" class="w-20 h-20 rounded-full border-4 border-purple-400 transition hover:opacity-30 opacity-80"/>
+								<img src={ profile.ProfilePicture } id="pfp" class="w-20 h-20 object-cover rounded-full border-4 border-purple-400 transition hover:opacity-30 opacity-80"/>
 							}
 						</label>
 						<input name="profile_picture" id="profile_picture" class="hidden" type="file" accept="image/*"/>

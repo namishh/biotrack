@@ -1,0 +1,9 @@
+package components
+
+import "github.com/russross/blackfriday/v2"
+
+templ MarkdownRenderer(content string) {
+	<div class="markdown-content text-left w-3/4 self-start leading-[20px] bg-neutral-800/50 p-4 text-left rounded-md whitespace-pre-line">
+		@templ.Raw(string(blackfriday.Run([]byte(content))))
+	</div>
+}

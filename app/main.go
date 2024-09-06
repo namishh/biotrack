@@ -41,7 +41,7 @@ func main() {
 	ps := services.NewProfileService(services.Profile{}, store)
 	es := services.NewEntryService(services.Entry{}, store)
 	as := services.NewAvatarService(services.Avatar{}, store)
-	cs, err := services.NewChatService(services.Chat{}, services.Chart{}, store)
+	cs, err := services.NewChatService(services.Chat{}, store)
 	if err != nil {
 		log.Fatalf("Failed to initialize chat service: %v", err)
 	}

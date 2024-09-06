@@ -2,8 +2,7 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
-
+	
 	"github.com/labstack/echo/v4"
 	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/pages/chat"
@@ -33,14 +32,22 @@ func (ch *ChatHandler) HomeHandler(c echo.Context) error {
 
 	if c.Request().Method == "POST" {
 		if len(c.FormValue("message")) > 0 {
-		ch.ChatService.NewUserChat(c.Get(user_id_key).(int), c.FormValue("message"))
-		fd, err := ch.EntryService.GetFormattedEntriesByUser(c.Get(user_id_key).(int))
-		err = ch.ChatService.GenerateResponse(c.Get(user_id_key).(int), fd)
-		fmt.Println(err)
+			ch.ChatService.NewUserChat(c.Get(user_id_key).(int), c.FormValue("message"))
+			fd, err := ch.EntryService.GetFormattedEntriesByUser(c.Get(user_id_key).(int))
+			if err != nil {
+				return err
+			}
+			err = ch.ChatService.GenerateResponse(c.Get(user_id_key).(int), fd)
 		}
 	}
 
-	cview := chat.Home(fromProtected)
+	chats, err := ch.ChatService.GetAllChatsByUserId(c.Get(user_id_key).(int))
+
+	if err != nil {
+		return err
+	}
+
+	cview := chat.Home(fromProtected, chats)
 	c.Set("ISERROR", false)
 
 	return renderView(c, chat.HomeIndex(
