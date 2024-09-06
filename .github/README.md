@@ -30,6 +30,8 @@ $ make run
 ![s3](https://i.imgur.com/X7SiCC5.png)
 ![s4](https://i.imgur.com/4mlzUDx.png)
 ![s5](https://i.imgur.com/CSeR8Av.png)
+![s7](https://i.imgur.com/0Ahpb3a.png)
+![s8](https://i.imgur.com/Z5FGbwh.png)
 
 ### Todo
 - [x] Setup
@@ -68,6 +70,6 @@ $ make run
   - [ ] Render
     - [ ] User Chats
     - [ ] Markdown
-- [ ] The End
-  - [ ] Error Pages
-  - [ ] Cleaning up code
+- [x] Final Touches
+  - [x] Error Pages
+  - [x] Cleaning up code

@@ -38,3 +38,33 @@ templ Base(title, username string, fromProtected, isError bool) {
 		</body>
 	</html>
 }
+
+templ ErrorBase(title string, fromProtected, isError bool) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta
+				name="description"
+				content="Bio Track"
+			/>
+			<meta name="google" content="notranslate"/>
+			<link rel="stylesheet" href="/static/app.css" type="text/css"/>
+			<link rel="icon" type="image/png" href="/static/favicon.png"/>
+			<title>Bio Track | { title }</title>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+		</head>
+		<body class="bg-neutral-950 overflow-x-hidden">
+			<div class="min-h-screen fixed w-screen bg-gradient-to-b -z-[2] from-purple-500/10 via-[#00000000] via-30% to-purple-500/15"></div>
+			<main class="z-[10000] bg-transparent">
+				{ children... }
+			</main>
+			<div
+				class="h-screen fixed  w-screen bg-[radial-gradient(169.40%_89.55%_at_94.76%_6.29%,rgba(0,0,0,0.30)_0%,rgba(0,0,0,0.5)_100%)]"
+			></div>
+		</body>
+	</html>
+}

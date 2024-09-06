@@ -25,6 +25,8 @@ func main() {
 	SECRET_KEY := os.Getenv("SECRET")
 	DB_NAME := os.Getenv("DB_NAME")
 
+	e.HTTPErrorHandler = handlers.CustomHTTPErrorHandler
+
 	// Use Middleware Here
 	e.Use(middleware.Logger())
 

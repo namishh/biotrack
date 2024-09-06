@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (ah *AuthHandler) flagsMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func flagsMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		sess, _ := session.Get(auth_sessions_key, c)
 		if auth, ok := sess.Values[auth_key].(bool); !ok || !auth {
@@ -20,7 +20,7 @@ func (ah *AuthHandler) flagsMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func (ah *AuthHandler) authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		sess, _ := session.Get(auth_sessions_key, c)
 		if auth, ok := sess.Values[auth_key].(bool); !ok || !auth {

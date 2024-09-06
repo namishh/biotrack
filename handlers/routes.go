@@ -5,22 +5,22 @@ import (
 )
 
 func SetupRoutes(e *echo.Echo, ah *AuthHandler, jh *JournalHandler, ch *ChatHandler) {
-	e.GET("/", ah.flagsMiddleware(ah.HomeHandler))
+	e.GET("/", flagsMiddleware(ah.HomeHandler))
 
 	// AUTH ROUTES
-	e.GET("/register", ah.flagsMiddleware(ah.RegisterHandler))
-	e.POST("/register", ah.flagsMiddleware(ah.RegisterHandler))
+	e.GET("/register", flagsMiddleware(ah.RegisterHandler))
+	e.POST("/register", flagsMiddleware(ah.RegisterHandler))
 
-	e.GET("/login", ah.flagsMiddleware(ah.LoginHandler))
-	e.POST("/login", ah.flagsMiddleware(ah.LoginHandler))
+	e.GET("/login", flagsMiddleware(ah.LoginHandler))
+	e.POST("/login", flagsMiddleware(ah.LoginHandler))
 
-	e.GET("/logout", ah.flagsMiddleware(ah.LogoutHandler))
-	e.GET("/avatar/:name", ah.flagsMiddleware(ah.Avatar))
+	e.GET("/logout", flagsMiddleware(ah.LogoutHandler))
+	e.GET("/avatar/:name", flagsMiddleware(ah.Avatar))
 
-	e.GET("/profile", ah.authMiddleware(ah.ProfileHandler))
-	e.POST("/profile", ah.authMiddleware(ah.ProfileHandler))
+	e.GET("/profile", authMiddleware(ah.ProfileHandler))
+	e.POST("/profile", authMiddleware(ah.ProfileHandler))
 
-	journalGroup := e.Group("/journal", ah.authMiddleware)
+	journalGroup := e.Group("/journal", authMiddleware)
 	journalGroup.GET("", jh.HomeHandler)
 	journalGroup.GET("/calendar", jh.CalendarHandler)
 	journalGroup.GET("/new", jh.NewHandler)
@@ -29,7 +29,9 @@ func SetupRoutes(e *echo.Echo, ah *AuthHandler, jh *JournalHandler, ch *ChatHand
 	journalGroup.GET("/:year/:month/:date/delete/:id", jh.DeleteHandler)
 	journalGroup.POST("/:year/:month/:date", jh.DayHandler)
 
-	chatGroup := e.Group("/chat", ah.authMiddleware)
+	chatGroup := e.Group("/chat", authMiddleware)
 	chatGroup.GET("", ch.HomeHandler)
 	chatGroup.POST("", ch.HomeHandler)
+
+	e.GET("/*", RouteNotFoundHandler)
 }
