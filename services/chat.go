@@ -118,7 +118,7 @@ func convertPartToString(part genai.Part) string {
 	}
 }
 
-func (cs *ChatService) GenerateResponse(id int, ud string) error {
+func (cs *ChatService) GenerateResponse(id int, ud string, profile Profile) error {
 	if cs.AI == nil {
 		return fmt.Errorf("AI session is not initialized")
 	}
@@ -143,6 +143,12 @@ func (cs *ChatService) GenerateResponse(id int, ud string) error {
 		{
 			Parts: []genai.Part{
 				genai.Text(ud),
+			},
+			Role: "user",
+		},
+		{
+			Parts: []genai.Part{
+				genai.Text(fmt.Sprintf("My current height is %f %s and weight is %f %s. I was born on %s", profile.Height, profile.HeightUnit, profile.Weight, profile.WeightUnit, profile.Birthday)),
 			},
 			Role: "user",
 		},

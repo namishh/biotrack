@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"errors"
-	
+
 	"github.com/labstack/echo/v4"
 	"github.com/namishh/biotrack/services"
 	"github.com/namishh/biotrack/views/pages/chat"
@@ -11,17 +11,18 @@ import (
 type ChatService interface {
 	NewUserChat(userid int, message string) error
 	GetAllChatsByUserId(userid int) ([]services.Chat, error)
-	GenerateResponse(id int, ud string) error
+	GenerateResponse(id int, ud string, profile services.Profile) error
 	NewAIChat(userid int, message string) error
 }
 
 type ChatHandler struct {
-	ChatService  ChatService
-	EntryService EntryService
+	ChatService    ChatService
+	EntryService   EntryService
+	ProfileService ProfileService
 }
 
-func NewChatHandler(cs ChatService, es EntryService) *ChatHandler {
-	return &ChatHandler{ChatService: cs, EntryService: es}
+func NewChatHandler(cs ChatService, es EntryService, ps ProfileService) *ChatHandler {
+	return &ChatHandler{ChatService: cs, EntryService: es, ProfileService: ps}
 }
 
 func (ch *ChatHandler) HomeHandler(c echo.Context) error {
@@ -37,7 +38,8 @@ func (ch *ChatHandler) HomeHandler(c echo.Context) error {
 			if err != nil {
 				return err
 			}
-			err = ch.ChatService.GenerateResponse(c.Get(user_id_key).(int), fd)
+			profile, err := ch.ProfileService.GetProfileByUserId(c.Get(user_id_key).(int))
+			err = ch.ChatService.GenerateResponse(c.Get(user_id_key).(int), fd, profile)
 		}
 	}
 

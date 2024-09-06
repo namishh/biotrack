@@ -50,7 +50,7 @@ func main() {
 
 	jh := handlers.NewJournalHandler(ps, es)
 
-	ch := handlers.NewChatHandler(cs, es)
+	ch := handlers.NewChatHandler(cs, es, ps)
 
 	if err != nil {
 		e.Logger.Fatalf("failed to create store: %s", err)
